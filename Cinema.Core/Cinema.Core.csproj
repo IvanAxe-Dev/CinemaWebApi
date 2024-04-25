@@ -11,8 +11,10 @@
     <Folder Include="Domain\RepositoryContracts\" />
     <Folder Include="DTO\" />
     <Folder Include="Enums\" />
-    <Folder Include="Services\" />
-    <Folder Include="ServiceContracts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
   </ItemGroup>
 
 </Project>
