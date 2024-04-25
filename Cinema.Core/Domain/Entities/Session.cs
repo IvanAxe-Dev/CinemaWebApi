@@ -1,8 +1,7 @@
 ﻿namespace Cinema.Core.Domain.Entities;
 
-public partial class Session
+public partial class Session : BaseEntity
 {
-    public Guid Id { get; set; }
 
     public DateTime? StartDate { get; set; }
 

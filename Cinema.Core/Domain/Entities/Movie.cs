@@ -1,9 +1,7 @@
 ﻿namespace Cinema.Core.Domain.Entities;
 
-public partial class Movie
+public partial class Movie : BaseEntity
 {
-    public Guid Id { get; set; }
-
     public string? Title { get; set; }
 
     public string? Description { get; set; }

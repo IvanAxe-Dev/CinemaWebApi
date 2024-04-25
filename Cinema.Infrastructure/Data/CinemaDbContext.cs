@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Cinema.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cinema.Infrastructure.DatabaseContext;
+namespace Cinema.Infrastructure.Data;
 
 public partial class CinemaDbContext : DbContext
 {
@@ -24,12 +24,10 @@ public partial class CinemaDbContext : DbContext
 
     public virtual DbSet<Session> Sessions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-P3UPN32\\SQLEXPRESS01; Database=CinemaDB; Trusted_Connection=True; TrustServerCertificate=True; ");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder); // Important!
+
         modelBuilder.Entity<Category>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();

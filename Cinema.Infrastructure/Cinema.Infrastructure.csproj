@@ -11,8 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DatabaseContext\" />
-    <Folder Include="Repositories\" />
+    <Folder Include="Data\" />
   </ItemGroup>
 
   <ItemGroup>
