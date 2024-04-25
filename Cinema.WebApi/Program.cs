@@ -7,9 +7,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<CinemaDbContext>(options =>
+builder.Services.AddDbContext<SqlcinemadbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString(nameof(CinemaDbContext)));
+    options.UseSqlServer(builder.Configuration.GetConnectionString(nameof(SqlcinemadbContext)));
 });
 
 builder.Services.AddCors(options =>
