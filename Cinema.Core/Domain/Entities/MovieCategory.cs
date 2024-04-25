@@ -1,4 +1,7 @@
-﻿namespace Cinema.Core.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Cinema.Infrastructure.DatabaseContext;
 
 public partial class MovieCategory
 {
@@ -6,7 +9,7 @@ public partial class MovieCategory
 
     public Guid MovieId { get; set; }
 
-    public virtual Category? Category { get; set; }
+    public virtual Category Category { get; set; } = null!;
 
-    public virtual Movie? Movie { get; set; }
+    public virtual Movie Movie { get; set; } = null!;
 }

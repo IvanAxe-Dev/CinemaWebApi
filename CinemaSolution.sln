@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cinema.WebApi", "Web\Cinema.WebApi.csproj", "{613425A8-7ADC-4CD7-8B83-A2FF864AFD3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cinema.WebApi", "Cinema.WebApi\Cinema.WebApi.csproj", "{613425A8-7ADC-4CD7-8B83-A2FF864AFD3D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{839DDF57-A825-476F-81B1-F9092C4CC205}"
 EndProject
