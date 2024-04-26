@@ -1,4 +1,6 @@
 using Cinema.Infrastructure.DatabaseContext;
+using Cinema.Infrastructure.MapsterConfiguration;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +9,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddLogging();
+
+builder.Services.AddMapster();
+MapsterConfig.Configure();
 
 builder.Services.AddDbContext<SqlcinemadbContext>(options =>
 {
