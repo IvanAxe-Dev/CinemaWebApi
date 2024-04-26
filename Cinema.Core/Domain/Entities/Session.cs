@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Cinema.Core.Domain.Entities;
+using System;
 using System.Collections.Generic;
 
 namespace Cinema.Infrastructure.DatabaseContext;
 
-public partial class Session
+public partial class Session : BaseEntity
 {
-    public Guid Id { get; set; }
-
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }

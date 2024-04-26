@@ -10,11 +10,11 @@ public class MovieDto
     
     public byte[] Image { get; set; }
     
-    public DateTime ReleaseDate { get; set; }
+    public string ReleaseDate { get; set; }
     
     public string Director { get; set; }
     
-    public TimeOnly Duration { get; set; }
+    public string Duration { get; set; }
     
     public string TrailerUrl { get; set; }
     

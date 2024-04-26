@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cinema.Core.Domain.Entities
+namespace Cinema.Core.DTO
 {
-    public interface IBaseEntity
+    public class CategoryDto
     {
-        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 }

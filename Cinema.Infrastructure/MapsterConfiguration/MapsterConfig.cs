@@ -8,7 +8,7 @@ public static class MapsterConfig
 {
     public static void Configure()
     {
-        // Configure your AutoMapper here
+
         TypeAdapterConfig<Movie, MovieDto>.NewConfig()
             .Map(dest => dest.Title, src => src.Title)
             
@@ -16,11 +16,11 @@ public static class MapsterConfig
             
             .Map(dest => dest.Image, src => src.Image)
             
-            .Map(dest => dest.ReleaseDate, src => src.ReleaseDate)
+            .Map(dest => dest.ReleaseDate, src => src.ReleaseDate.Value.ToString("dd.MM.yyyy"))
             
             .Map(dest => dest.Director, src => src.Director)
             
-            .Map(dest => dest.Duration, src => src.Duration)
+            .Map(dest => dest.Duration, src => src.Duration.Value.ToString("H 'hours' m 'minutes'"))
             
             .Map(dest => dest.TrailerUrl, src => src.TrailerUrl)
             
@@ -29,5 +29,8 @@ public static class MapsterConfig
             .Map(dest => dest.Rating, src => src.Rating)
             
             .Map(dest => dest.Sessions, src => src.Sessions);
+
+        TypeAdapterConfig<Category, CategoryDto>.NewConfig()
+            .Map(dest => dest.Name, src => src.Name);
     }
 }

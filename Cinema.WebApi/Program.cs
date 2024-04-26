@@ -1,5 +1,7 @@
+using Cinema.Core.Domain.RepositoryContracts;
 using Cinema.Infrastructure.DatabaseContext;
 using Cinema.Infrastructure.MapsterConfiguration;
+using Cinema.Infrastructure.Repositories;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +11,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddLogging();
+
+builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 
 builder.Services.AddMapster();
 MapsterConfig.Configure();
