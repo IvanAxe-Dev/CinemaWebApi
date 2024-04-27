@@ -1,4 +1,4 @@
-﻿using Cinema.Infrastructure.DatabaseContext;
+﻿using Cinema.Core.Domain.Entities;
 using Microsoft.Data.SqlClient;
 using Cinema.Core.Domain.RepositoryContracts;
 using Microsoft.EntityFrameworkCore;

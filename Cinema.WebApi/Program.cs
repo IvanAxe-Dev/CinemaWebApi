@@ -1,5 +1,5 @@
 using Cinema.Core.Domain.RepositoryContracts;
-using Cinema.Infrastructure.DatabaseContext;
+using Cinema.Core.Domain.Entities;
 using Cinema.Infrastructure.MapsterConfiguration;
 using Cinema.Infrastructure.Repositories;
 using Mapster;
