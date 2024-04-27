@@ -5,11 +5,10 @@ namespace Cinema.Core.Domain.Entities
     public partial class CinemaHall : BaseEntity
     {
         public Graphics? Graphics { get; set; }
-
         public Privilege? Privilege { get; set; }
-
-        public byte[][] Seats { get; set; }
-
+        public int? SeatRows { get; set; }
+        public int? SeatNumbers { get; set; }
+        public ICollection<Seat> Seats { get; set; } = new List<Seat>();
         public ICollection<Session> Sessions { get; set; } = new List<Session>();
     }
 }

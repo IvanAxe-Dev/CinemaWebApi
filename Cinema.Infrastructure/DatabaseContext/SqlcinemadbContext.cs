@@ -27,6 +27,8 @@ public partial class SqlcinemadbContext : DbContext
 
     public virtual DbSet<Session> Sessions { get; set; }
 
+    public virtual DbSet<Seat> Seats { get; set; }  
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
@@ -69,6 +71,17 @@ public partial class SqlcinemadbContext : DbContext
 
         });
 
+        modelBuilder.Entity<Seat>(entity =>
+        {
+            entity.HasKey(e => e.Id); 
+
+            entity.Property(e => e.Row).IsRequired();
+            entity.Property(e => e.Number).IsRequired();
+
+            entity.HasOne(s => s.CinemaHall)
+                .WithMany(ch => ch.Seats)
+                .HasForeignKey(s => s.CinemaHallId); 
+        });
         OnModelCreatingPartial(modelBuilder);
     }
 
