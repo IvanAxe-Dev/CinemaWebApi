@@ -50,6 +50,7 @@ namespace Cinema.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("SeatsCount")
+
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -157,6 +158,7 @@ namespace Cinema.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateOnly>("Date")
+
                         .HasColumnType("date");
 
                     b.Property<Guid?>("MovieId")
@@ -166,6 +168,7 @@ namespace Cinema.Infrastructure.Migrations
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<TimeOnly>("StartTime")
+
                         .HasColumnType("time");
 
                     b.HasKey("Id");
