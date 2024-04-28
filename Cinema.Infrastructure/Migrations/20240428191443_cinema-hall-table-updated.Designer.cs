@@ -4,6 +4,7 @@ using Cinema.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cinema.Infrastructure.Migrations
 {
     [DbContext(typeof(SqlcinemadbContext))]
-    partial class SqlcinemadbContextModelSnapshot : ModelSnapshot
+    [Migration("20240428191443_cinema-hall-table-updated")]
+    partial class cinemahalltableupdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +53,6 @@ namespace Cinema.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("SeatsCount")
-
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -158,7 +160,6 @@ namespace Cinema.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateOnly>("Date")
-
                         .HasColumnType("date");
 
                     b.Property<Guid?>("MovieId")
@@ -168,7 +169,6 @@ namespace Cinema.Infrastructure.Migrations
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<TimeOnly>("StartTime")
-
                         .HasColumnType("time");
 
                     b.HasKey("Id");
