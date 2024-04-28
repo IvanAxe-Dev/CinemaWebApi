@@ -65,7 +65,7 @@ namespace Cinema.Core.Domain.Specifications
         public void ApplyPagging(int take, int skip)
         {
             Take = take;
-            //Skip = skip;
+            Skip = skip;
             isPagingEnabled = true;
         }
     }
