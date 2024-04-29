@@ -14,31 +14,31 @@ namespace Cinema.Core.Services
             _repository = repository;
         }
 
-        public Task<List<T>> GetAllAsync()
+        public virtual async Task<List<T>> GetAllAsync()
         {
-            return _repository.GetAll().ToListAsync();
+            return await _repository.GetAll().ToListAsync();
         }
 
-        public Task<T?> FindByIdAsync(Guid id)
+        public virtual async Task<T?> FindByIdAsync(Guid id)
         {
-            return _repository.GetFirstOrDefaultAsync(entity => entity.Id == id);
+            return await _repository.GetFirstOrDefaultAsync(entity => entity.Id == id);
         }
 
-        public async Task<T> Insert(T entity)
+        public virtual async Task<T> Insert(T entity)
         {
             await _repository.Post(entity);
             await _repository.SaveChangesAsync();
             return entity;
         }
 
-        public async Task<T> Update(T entity)
+        public virtual async Task<T> Update(T entity)
         {
             _repository.Update(entity);
             await _repository.SaveChangesAsync();
             return entity;
         }
 
-        public async Task DeleteAsync(T entity)
+        public virtual async Task DeleteAsync(T entity)
         {
             _repository.Delete(entity);
             await _repository.SaveChangesAsync();
