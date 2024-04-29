@@ -1,5 +1,7 @@
 using Cinema.Core.Domain.RepositoryContracts;
 using Cinema.Core.Domain.Entities;
+using Cinema.Core.ServiceContracts;
+using Cinema.Core.Services;
 using Cinema.Infrastructure.MapsterConfiguration;
 using Cinema.Infrastructure.Repositories;
 using Mapster;
@@ -13,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddLogging();
 
 builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddTransient(typeof(IService<>), typeof(Service<>));
 
 builder.Services.AddMapster();
 MapsterConfig.Configure();
