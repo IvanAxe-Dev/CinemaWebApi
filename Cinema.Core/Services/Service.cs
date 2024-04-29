@@ -35,7 +35,10 @@ namespace Cinema.Core.Services
         {
             _repository.Update(entity);
             await _repository.SaveChangesAsync();
-            return entity;
+            
+            var updatedEntity = await _repository.GetFirstOrDefaultAsync(e => e.Id == entity.Id);
+            
+            return updatedEntity;
         }
 
         public virtual async Task DeleteAsync(T entity)
