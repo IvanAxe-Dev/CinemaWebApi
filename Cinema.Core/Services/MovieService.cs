@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Cinema.Core.Services
 {
-    public class CategoryService : Service<Category>
+    public class MovieService : Service<Movie>
     {
-        public CategoryService(IRepository<Category> categoryRepository) : base(categoryRepository)
+        public MovieService(IRepository<Movie> movieRepository) : base(movieRepository)
         {
         }
     }
