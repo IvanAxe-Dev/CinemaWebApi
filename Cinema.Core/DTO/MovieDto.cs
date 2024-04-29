@@ -1,4 +1,4 @@
-﻿using Cinema.Infrastructure.DatabaseContext;
+﻿using Cinema.Core.Domain.Entities;
 
 namespace Cinema.Core.DTO;
 

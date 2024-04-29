@@ -1,26 +1,13 @@
-﻿using Cinema.Core.Domain.Entities;
-using System;
-using System.Collections.Generic;
-
-namespace Cinema.Infrastructure.DatabaseContext;
-
-public partial class Session : BaseEntity
+﻿namespace Cinema.Core.Domain.Entities
 {
-    public DateTime? StartDate { get; set; }
-
-    public DateTime? EndDate { get; set; }
-
-    public decimal? Price { get; set; }
-
-    public int? CinemaHall { get; set; }
-
-    public string? Graphics { get; set; }
-
-    public int? Seats { get; set; }
-
-    public Guid? MovieId { get; set; }
-
-    public string? Privilege { get; set; }
-
-    public virtual Movie? Movie { get; set; }
+    //one session is <movie> at <time> on <weekday, date>
+    public partial class Session : BaseEntity
+    {
+        public DateOnly Date { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public decimal Price { get; set; }
+        public int AvailableSeats { get; set; }
+        public Movie Movie { get; set; }
+        public CinemaHall CinemaHall { get; set; }
+    }
 }

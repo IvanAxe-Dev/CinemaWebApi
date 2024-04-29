@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cinema.Infrastructure.DatabaseContext;
+namespace Cinema.Core.Domain.Entities;
 
 public partial class SqlcinemadbContext : DbContext
 {
@@ -17,18 +17,23 @@ public partial class SqlcinemadbContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<Ticket> Tickets { get; set; }
+
+    public virtual DbSet<CinemaHall> CinemaHalls { get; set; }
+
     public virtual DbSet<Movie> Movies { get; set; }
 
     public virtual DbSet<MovieCategory> MovieCategories { get; set; }
 
     public virtual DbSet<Session> Sessions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=sqlcinema.database.windows.net;Initial Catalog=sqlcinemadb;User ID=sqladmin;Password=!1String;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False  ");
+    public virtual DbSet<Seat> Seats { get; set; }  
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        base.OnModelCreating(modelBuilder); // Important!
+
         modelBuilder.Entity<Category>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
@@ -62,17 +67,21 @@ public partial class SqlcinemadbContext : DbContext
         modelBuilder.Entity<Session>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.EndDate).HasColumnType("datetime");
-            entity.Property(e => e.Graphics).HasMaxLength(2);
             entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.Privilege).HasMaxLength(50);
-            entity.Property(e => e.StartDate).HasColumnType("datetime");
 
-            entity.HasOne(d => d.Movie).WithMany(p => p.Sessions)
-                .HasForeignKey(d => d.MovieId)
-                .HasConstraintName("FK_Sessions_Movies");
         });
 
+        modelBuilder.Entity<Seat>(entity =>
+        {
+            entity.HasKey(e => e.Id); 
+
+            entity.Property(e => e.Row).IsRequired();
+            entity.Property(e => e.Number).IsRequired();
+
+            entity.HasOne(s => s.CinemaHall)
+                .WithMany(ch => ch.Seats)
+                .HasForeignKey(s => s.CinemaHallId); 
+        });
         OnModelCreatingPartial(modelBuilder);
     }
 

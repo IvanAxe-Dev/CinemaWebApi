@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Cinema.Infrastructure.DatabaseContext;
-
-public partial class MovieCategory
+﻿namespace Cinema.Core.Domain.Entities
 {
-    public Guid CategoryId { get; set; }
+    public partial class MovieCategory
+    {
+        public Guid CategoryId { get; set; }
 
-    public Guid MovieId { get; set; }
+        public Guid MovieId { get; set; }
 
-    public virtual Category Category { get; set; } = null!;
+        public Category Category { get; set; }
 
-    public virtual Movie Movie { get; set; } = null!;
+        public Movie Movie { get; set; }
+    }
 }
