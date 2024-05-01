@@ -1,10 +1,13 @@
 using Cinema.Core.Domain.RepositoryContracts;
 using Cinema.Core.Domain.Entities;
+using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.ServiceContracts;
 using Cinema.Core.Services;
 using Cinema.Infrastructure.MapsterConfiguration;
 using Cinema.Infrastructure.Repositories;
 using Mapster;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +36,21 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+    {
+        options.Password.RequiredLength = 8;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireDigit = true;
+
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddEntityFrameworkStores<SqlcinemadbContext>()
+    .AddDefaultTokenProviders()
+    .AddUserStore<UserStore<ApplicationUser, ApplicationRole, SqlcinemadbContext, Guid>>()
+    .AddRoleStore<RoleStore<ApplicationRole, SqlcinemadbContext, Guid>>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -46,6 +64,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

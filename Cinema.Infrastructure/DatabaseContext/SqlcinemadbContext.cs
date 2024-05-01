@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Cinema.Core.Domain.IdentityEntities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cinema.Core.Domain.Entities;
 
-public partial class SqlcinemadbContext : DbContext
+public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {
     public SqlcinemadbContext()
     {
