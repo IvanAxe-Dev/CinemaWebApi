@@ -20,10 +20,17 @@ public class JwtService : IJwtService
         _configuration = configuration;
     }
 
+    /// <summary>
+    /// Generates a JWT token using the given user's information and the configuration settings.
+    /// </summary>
+    /// <param name="user">ApplicationUser object</param>
+    /// <returns>AuthenticationResponse that includes token</returns>
     public AuthenticationResponse CreateJwtToken(ApplicationUser user)
     {
+        // DateTime object representing the token expiration time by adding the number of minutes specified in the configuration to the current UTC time.
         var expiration = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["Jwt:EXPIRATION_MINUTES"]));
 
+        // Array of Claim objects representing the user's claims, such as their ID, name, email, etc. Token Payload
         Claim[] claims = new Claim[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -31,14 +38,18 @@ public class JwtService : IJwtService
             new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email.ToString()),
-            new Claim(ClaimTypes.Name, user.UserName.ToString()), 
+            new Claim(ClaimTypes.Name, user.UserName.ToString()),
+            new Claim(ClaimTypes.Role, user.Role.ToString())
         };
 
+        // SymmetricSecurityKey object using the key specified in the configuration. Token signature
         SymmetricSecurityKey securityKey =
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 
+        // Creating a SigningCredentials object with the security key and the HMACSHA256 algorithm.
         SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+        // Creating a JwtSecurityToken object with the given issuer, audience, claims, expiration, and signing credentials.
         JwtSecurityToken tokenGenerator = new JwtSecurityToken(
             _configuration["Jwt:Issuer"],
             _configuration["Jwt:Audience"],
@@ -47,9 +58,11 @@ public class JwtService : IJwtService
             signingCredentials: signingCredentials
         );
 
+        // Creating a JwtSecurityTokenHandler object and use it to write the token as a string.
         JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
         string token = tokenHandler.WriteToken(tokenGenerator);
 
+        // Return an AuthenticationResponse object containing the token, user email, user name, and token expiration time.
         return new AuthenticationResponse
         {
             Username = user.UserName,

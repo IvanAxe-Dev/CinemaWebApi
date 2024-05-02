@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.DTO;
+using Cinema.Core.Enums;
 using Cinema.Core.ServiceContracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -49,12 +50,13 @@ namespace Cinema.WebApi.Controllers
                 UserName = registerDTO.Username,
                 Email = registerDTO.Email,
                 PhoneNumber = registerDTO.PhoneNumber,
+                Role = registerDTO.Role
             };
 
             var result = await _userManager.CreateAsync(user, registerDTO.Password);
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, isPersistent: false);
+                await CreateUserRole(registerDTO, user);
 
                 var authenticationResponse = _jwtService.CreateJwtToken(user);
 
@@ -74,6 +76,8 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
+        
+
         [HttpPost("login")]
         public async Task<ActionResult<ApplicationUser>>PostLogin(LoginDTO loginDTO)
         {
@@ -88,18 +92,17 @@ namespace Cinema.WebApi.Controllers
                 return Problem(errorMessage);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(loginDTO.EmailOrUsername, loginDTO.Password, isPersistent: false,
-                lockoutOnFailure: false);
+            var user = await _userManager.FindByNameAsync(loginDTO.EmailOrUsername) ?? await _userManager.FindByEmailAsync(loginDTO.EmailOrUsername);
+
+            if (user is null)
+            {
+                return Problem("Invalid Email/Username");
+            }
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByNameAsync(loginDTO.EmailOrUsername)  ?? await _userManager.FindByEmailAsync(loginDTO.EmailOrUsername);
-
-                if (user is null)
-                {
-                    return NoContent();
-                }
-
                 var authenticationResponse = _jwtService.CreateJwtToken(user);
 
                 user.RefreshToken = authenticationResponse.RefreshToken;
@@ -110,7 +113,7 @@ namespace Cinema.WebApi.Controllers
             }
             else
             {
-                return Problem("Invalid Email/Username or Password");
+                return Problem("Invalid Password");
             }
         }
 
@@ -167,6 +170,42 @@ namespace Cinema.WebApi.Controllers
             await _userManager.UpdateAsync(user);
 
             return Ok(authenticationResponse);
+        }
+
+        private async Task CreateUserRole(RegisterDTO registerDTO, ApplicationUser user)
+        {
+
+            switch (registerDTO.Role)
+            {
+                case UserRoleOptions.Admin:
+                {
+                    if (await _roleManager.FindByNameAsync(UserRoleOptions.Admin.ToString()) is null)
+                    {
+                        var applicationRole = new ApplicationRole()
+                        {
+                            Name = UserRoleOptions.Admin.ToString(),
+                        };
+                        await _roleManager.CreateAsync(applicationRole);
+                    }
+
+                    await _userManager.AddToRoleAsync(user, UserRoleOptions.Admin.ToString());
+                    break;
+                }
+                case UserRoleOptions.User:
+                {
+                    if (await _roleManager.FindByNameAsync(UserRoleOptions.User.ToString()) is null)
+                    {
+                        var applicationRole = new ApplicationRole()
+                        {
+                            Name = UserRoleOptions.User.ToString(),
+                        };
+                        await _roleManager.CreateAsync(applicationRole);
+                    }
+
+                    await _userManager.AddToRoleAsync(user, UserRoleOptions.User.ToString());
+                    break;
+                }
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using Cinema.Core.Enums;
 
 namespace Cinema.Core.DTO
 {
@@ -24,6 +26,8 @@ namespace Cinema.Core.DTO
         [Phone(ErrorMessage = "Phone Number should be in proper phone number format")]
         [Remote(action: "IsEmailAlreadyRegistered", controller: "Account", ErrorMessage = "Email is already in use")]
         public string PhoneNumber { get; set; } = string.Empty;
+
+        public UserRoleOptions Role { get; set; }
 
     }
 }
