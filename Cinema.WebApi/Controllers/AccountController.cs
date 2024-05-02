@@ -1,9 +1,13 @@
-﻿using Cinema.Core.Domain.IdentityEntities;
+﻿using System.Security.Claims;
+using System.Security.Cryptography;
+using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework;
+using NuGet.Common;
 
 namespace Cinema.WebApi.Controllers
 {
@@ -54,6 +58,10 @@ namespace Cinema.WebApi.Controllers
 
                 var authenticationResponse = _jwtService.CreateJwtToken(user);
 
+                user.RefreshToken = authenticationResponse.RefreshToken;
+                user.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
+                await _userManager.UpdateAsync(user);
+
                 return Ok(authenticationResponse);
             }
             else
@@ -94,6 +102,10 @@ namespace Cinema.WebApi.Controllers
 
                 var authenticationResponse = _jwtService.CreateJwtToken(user);
 
+                user.RefreshToken = authenticationResponse.RefreshToken;
+                user.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
+                await _userManager.UpdateAsync(user);
+
                 return Ok(authenticationResponse);
             }
             else
@@ -120,6 +132,41 @@ namespace Cinema.WebApi.Controllers
             {
                 return Ok(false);
             }
+        }
+
+        [HttpPost("generate-new-jwt-token")]
+        public async Task<IActionResult> GenerateNewAccessToken(TokenModel tokenModel)
+        {
+            if (tokenModel is null)
+            {
+                return BadRequest("Invalid client request");
+            }
+
+            ClaimsPrincipal? principal = _jwtService.GetPrincipalFromJwtToken(tokenModel.Token);
+
+            if (principal is null)
+            {
+                return BadRequest("Invalid jwt access token");
+            }
+
+            string? email = principal.FindFirstValue(ClaimTypes.Email);
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user is null 
+                || user.RefreshToken != tokenModel.RefreshToken
+                || user.RefreshTokenExpiration  <= DateTime.Now)
+            {
+                return BadRequest("Invalid refresh token");
+            }
+
+            var authenticationResponse = _jwtService.CreateJwtToken(user);
+
+            user.RefreshToken = authenticationResponse.RefreshToken;
+            user.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
+            await _userManager.UpdateAsync(user);
+
+            return Ok(authenticationResponse);
         }
     }
 }
