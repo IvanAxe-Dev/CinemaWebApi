@@ -19,6 +19,7 @@ builder.Services.AddLogging();
 
 builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddTransient(typeof(IService<>), typeof(Service<>));
+builder.Services.AddTransient<IJwtService, JwtService>();
 
 builder.Services.AddMapster();
 MapsterConfig.Configure();
