@@ -69,6 +69,11 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
 
+            entity.HasOne(s => s.CinemaHall)
+                .WithMany(ch => ch.Sessions)
+                .HasForeignKey(s => s.CinemaHallId)
+                .OnDelete(DeleteBehavior.NoAction);
+
         });
 
         modelBuilder.Entity<Seat>(entity =>
