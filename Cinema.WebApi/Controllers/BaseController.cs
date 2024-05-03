@@ -5,7 +5,7 @@ namespace Cinema.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomControllerBase : ControllerBase
+    public class BaseController : ControllerBase
     {
     }
 }

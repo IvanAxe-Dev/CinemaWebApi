@@ -13,7 +13,7 @@ using NuGet.Common;
 namespace Cinema.WebApi.Controllers
 {
     [AllowAnonymous]
-    public class AccountController : CustomControllerBase
+    public class AccountController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
