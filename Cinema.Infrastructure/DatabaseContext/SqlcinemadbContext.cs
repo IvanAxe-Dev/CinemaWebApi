@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Cinema.Core.Domain.IdentityEntities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cinema.Core.Domain.Entities;
 
-public partial class SqlcinemadbContext : DbContext
+public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {
     public SqlcinemadbContext()
     {
@@ -68,6 +68,11 @@ public partial class SqlcinemadbContext : DbContext
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(s => s.CinemaHall)
+                .WithMany(ch => ch.Sessions)
+                .HasForeignKey(s => s.CinemaHallId)
+                .OnDelete(DeleteBehavior.NoAction);
 
         });
 
