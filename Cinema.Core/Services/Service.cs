@@ -11,39 +11,40 @@ public class Service<T> : IService<T> where T : class, IBaseEntity
 
     public Service(IRepository<T> repository)
     {
-            _repository = repository;
-        }
+        _repository = repository;
+    }
 
     public virtual async Task<List<T>> GetAllAsync()
     {
-            return await _repository.GetAll().ToListAsync();
-        }
+        return await _repository.GetAll().ToListAsync();
+    }
 
     public virtual async Task<T?> FindByIdAsync(Guid id)
     {
-            return await _repository.GetFirstOrDefaultAsync(entity => entity.Id == id);
-        }
+        return await _repository.GetFirstOrDefaultAsync(entity => entity.Id == id);
+    }
 
     public virtual async Task<T> Insert(T entity)
     {
-            await _repository.Post(entity);
-            await _repository.SaveChangesAsync();
-            return entity;
-        }
+        entity.Id = Guid.NewGuid();
+        await _repository.Post(entity);
+        await _repository.SaveChangesAsync();
+        return entity;
+    }
 
     public virtual async Task<T> Update(T entity)
     {
-            _repository.Update(entity);
-            await _repository.SaveChangesAsync();
-            
-            var updatedEntity = await _repository.GetFirstOrDefaultAsync(e => e.Id == entity.Id);
-            
-            return updatedEntity;
-        }
+        _repository.Update(entity);
+        await _repository.SaveChangesAsync();
+        
+        var updatedEntity = await _repository.GetFirstOrDefaultAsync(e => e.Id == entity.Id);
+        
+        return updatedEntity;
+    }
 
     public virtual async Task DeleteAsync(T entity)
     {
-            _repository.Delete(entity);
-            await _repository.SaveChangesAsync();
-        }
+        _repository.Delete(entity);
+        await _repository.SaveChangesAsync();
+    }
 }

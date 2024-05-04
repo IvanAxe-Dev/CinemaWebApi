@@ -4,6 +4,7 @@ using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.DTO;
 using Cinema.Core.Enums;
 using Cinema.Core.ServiceContracts;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,16 +20,19 @@ namespace Cinema.WebApi.Controllers
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IJwtService _jwtService;
+        private readonly IMapper _mapster;
 
         public AccountController(
             UserManager<ApplicationUser> userManager, 
             RoleManager<ApplicationRole> roleManager, 
-            SignInManager<ApplicationUser> signInManager, IJwtService jwtService)
+            SignInManager<ApplicationUser> signInManager, 
+            IJwtService jwtService, IMapper mapster)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _jwtService = jwtService;
+            _mapster = mapster;
         }
 
         [HttpPost("register")]
@@ -45,13 +49,15 @@ namespace Cinema.WebApi.Controllers
                 return Problem(errorMessage);
             }
 
-            ApplicationUser user = new ApplicationUser
-            {
-                UserName = registerDTO.Username,
-                Email = registerDTO.Email,
-                PhoneNumber = registerDTO.PhoneNumber,
-                Role = registerDTO.Role
-            };
+            var user = _mapster.Map<ApplicationUser>(registerDTO);
+            
+            // ApplicationUser user = new ApplicationUser
+            // {
+            //     UserName = registerDTO.Username,
+            //     Email = registerDTO.Email,
+            //     PhoneNumber = registerDTO.PhoneNumber,
+            //     Role = registerDTO.Role
+            // };
 
             var result = await _userManager.CreateAsync(user, registerDTO.Password);
             if (result.Succeeded)
