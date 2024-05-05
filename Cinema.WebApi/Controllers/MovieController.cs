@@ -8,7 +8,7 @@ namespace Cinema.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public abstract class MovieController : BaseController
+    public class MovieController : BaseController
     {
         private readonly IService<Movie?> _movieService;
         private readonly IMapper _mapster;
