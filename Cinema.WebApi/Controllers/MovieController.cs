@@ -45,6 +45,7 @@ namespace Cinema.WebApi.Controllers
         {
             Movie newMovie = await _movieService.Insert(_mapster.Map<Movie>(movieDto));
 
+
             return CreatedAtAction(nameof(GetById), new { id = newMovie.Id }, newMovie);
         }
 
