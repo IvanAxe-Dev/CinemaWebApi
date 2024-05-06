@@ -10,28 +10,30 @@ namespace Cinema.WebApi.Controllers
     [ApiController]
     public class MovieController : BaseController
     {
-        private readonly IService<Movie?> _movieService;
+        private readonly IService<Movie> _movieService;
         private readonly IMapper _mapster;
 
-        public MovieController(IService<Movie?> movieService, IMapper mapster)
+        public MovieController(IService<Movie> movieService, IMapper mapster)
         {
             _movieService = movieService;
             _mapster = mapster;
-            
+
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Movie>>> GetAll()
         {
-            List<Movie?> movies = await _movieService.GetAllAsync();
+            List<Movie> movies = await _movieService.GetAllAsync();
+
             return Ok(movies);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<Movie>> GetById(Guid id)
         {
-            Movie? movie = await _movieService.FindByIdAsync( id);
-            if (movie==null)
+            Movie? movie = await _movieService.FindByIdAsync(id);
+
+            if (movie == null)
             {
                 return NotFound("Movie not found");
             }
@@ -42,22 +44,24 @@ namespace Cinema.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Movie>> Create(MovieDto movieDto)
         {
-            Movie newMovie = _mapster.Map<Movie>(movieDto);
-            Movie? createdMovie = await _movieService.Insert(newMovie);
-            return CreatedAtAction(nameof(GetById), new {id = createdMovie!.Id}, createdMovie);
+            Movie newMovie = await _movieService.Insert(_mapster.Map<Movie>(movieDto));
+
+            return CreatedAtAction(nameof(GetById), new { id = newMovie!.Id }, newMovie);
         }
-        
+
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<Movie>> Update(Guid id, MovieDto movieDto)
         {
             Movie? existingMovie = await _movieService.FindByIdAsync(id);
+
             if (existingMovie == null)
             {
                 return NotFound("Movie not found");
             }
 
             Movie movie = _mapster.Map(movieDto, existingMovie);
-            Movie? updatedMovie = await _movieService.Update(movie);
+            Movie updatedMovie = await _movieService.Update(movie);
+
             return Ok(updatedMovie);
         }
 
@@ -65,6 +69,7 @@ namespace Cinema.WebApi.Controllers
         public async Task<ActionResult> Delete(Guid id)
         {
             Movie? movie = await _movieService.FindByIdAsync(id);
+
             if (movie == null)
             {
                 return NotFound("Movie not found");

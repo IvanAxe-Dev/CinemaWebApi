@@ -22,50 +22,57 @@ namespace Cinema.WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Session>>> GetAll()
         {
-            var sessions = await _sessionService.GetAllAsync();
+            List<Session> sessions = await _sessionService.GetAllAsync();
+
             return Ok(sessions);
         }
         
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<Session>> GetById(Guid id)
         {
-            var session = await _sessionService.FindByIdAsync(id);
+            Session? session = await _sessionService.FindByIdAsync(id);
+
             if (session == null)
             {
                 return NotFound();
             }
+
             return Ok(session);
         }
         
         [HttpPost]
         public async Task<ActionResult<Session>> Create(SessionDto sessionDto)
         {
-            var session = _mapster.Map<Session>(sessionDto);
-            await _sessionService.Insert(session);
-            return CreatedAtAction(nameof(GetById), new { id = session.Id }, session);
+            Session newSession = await _sessionService.Insert(_mapster.Map<Session>(sessionDto));
+            return CreatedAtAction(nameof(GetById), new { id = newSession.Id }, newSession);
         }
         
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<Session>> Update(Guid id, SessionDto sessionDto)
         {
-            var existingSession = await _sessionService.FindByIdAsync(id);
+            Session? existingSession = await _sessionService.FindByIdAsync(id);
+
             if (existingSession == null)
             {
                 return NotFound();
             }
-            var session = _mapster.Map(sessionDto, existingSession);
-            var updatedSession = await _sessionService.Update(session);
+
+            Session session = _mapster.Map(sessionDto, existingSession);
+            Session updatedSession = await _sessionService.Update(session);
+
             return Ok(updatedSession);
         }
         
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var session = await _sessionService.FindByIdAsync(id);
+            Session? session = await _sessionService.FindByIdAsync(id);
+
             if (session == null)
             {
                 return NotFound();
             }
+
             await _sessionService.DeleteAsync(session);
             return NoContent();
         }

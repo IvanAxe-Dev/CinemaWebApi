@@ -18,54 +18,61 @@ namespace Cinema.WebApi.Controllers
             _categoryService = categoryService;
             _mapster = mapster;
         }
-        
+
         [HttpGet]
         public async Task<ActionResult<List<Category>>> GetAll()
         {
-            var categories = await _categoryService.GetAllAsync();
+            List<Category> categories = await _categoryService.GetAllAsync();
+
             return Ok(categories);
         }
-        
+
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<Category>> GetById(Guid id)
         {
-            var category = await _categoryService.FindByIdAsync(id);
+            Category? category = await _categoryService.FindByIdAsync(id);
+
             if (category == null)
             {
                 return NotFound("Category not found");
             }
             return Ok(category);
         }
-        
+
         [HttpPost]
         public async Task<ActionResult<Category>> Create(CategoryDto categoryDto)
         {
-            var newCaregory = _mapster.Map<Category>(categoryDto);
-            var createdCategory = await _categoryService.Insert(newCaregory);
-            return CreatedAtAction(nameof(GetById), new { id = createdCategory.Id }, createdCategory);
+            Category newCategory = await _categoryService.Insert(_mapster.Map<Category>(categoryDto));
+
+            return CreatedAtAction(nameof(GetById), new { id = newCategory.Id }, newCategory);
         }
-        
+
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<Category>> Update(Guid id, CategoryDto categoryDto)
         {
-            var existingCategory = await _categoryService.FindByIdAsync(id);
+            Category? existingCategory = await _categoryService.FindByIdAsync(id);
+
             if (existingCategory == null)
             {
                 return NotFound("Category not found");
             }
-            var category = _mapster.Map(categoryDto, existingCategory);
-            var updatedCategory = await _categoryService.Update(category);
+
+            Category category = _mapster.Map(categoryDto, existingCategory);
+            Category updatedCategory = await _categoryService.Update(category);
+
             return Ok(updatedCategory);
         }
-        
+
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var existingCategory = await _categoryService.FindByIdAsync(id);
+            Category? existingCategory = await _categoryService.FindByIdAsync(id);
+
             if (existingCategory == null)
             {
                 return NotFound("Category not found");
             }
+
             await _categoryService.DeleteAsync(existingCategory);
             return NoContent();
         }
