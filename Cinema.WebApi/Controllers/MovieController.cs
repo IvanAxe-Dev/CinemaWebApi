@@ -17,7 +17,6 @@ namespace Cinema.WebApi.Controllers
         {
             _movieService = movieService;
             _mapster = mapster;
-
         }
 
         [HttpGet]
@@ -46,7 +45,7 @@ namespace Cinema.WebApi.Controllers
         {
             Movie newMovie = await _movieService.Insert(_mapster.Map<Movie>(movieDto));
 
-            return CreatedAtAction(nameof(GetById), new { id = newMovie!.Id }, newMovie);
+            return CreatedAtAction(nameof(GetById), new { id = newMovie.Id }, newMovie);
         }
 
         [HttpPut("{id:guid}")]
@@ -60,9 +59,8 @@ namespace Cinema.WebApi.Controllers
             }
 
             Movie movie = _mapster.Map(movieDto, existingMovie);
-            Movie updatedMovie = await _movieService.Update(movie);
 
-            return Ok(updatedMovie);
+            return Ok(await _movieService.Update(movie));
         }
 
         [HttpDelete("{id:guid}")]

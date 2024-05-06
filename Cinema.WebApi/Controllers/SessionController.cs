@@ -58,9 +58,8 @@ namespace Cinema.WebApi.Controllers
             }
 
             Session session = _mapster.Map(sessionDto, existingSession);
-            Session updatedSession = await _sessionService.Update(session);
 
-            return Ok(updatedSession);
+            return Ok(await _sessionService.Update(session));
         }
         
         [HttpDelete("{id:guid}")]
