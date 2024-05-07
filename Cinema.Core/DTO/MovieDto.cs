@@ -20,7 +20,7 @@ public class MovieDto
     
     public string Actors { get; set; }
     
-    public double Rating { get; set; }
+    public List<int> Ratings { get; set; }
     
     public List<Session> Sessions { get; set; }
 }
