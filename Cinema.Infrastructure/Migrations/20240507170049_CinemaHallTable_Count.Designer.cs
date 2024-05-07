@@ -4,6 +4,7 @@ using Cinema.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cinema.Infrastructure.Migrations
 {
     [DbContext(typeof(SqlcinemadbContext))]
-    partial class SqlcinemadbContextModelSnapshot : ModelSnapshot
+    [Migration("20240507170049_CinemaHallTable_Count")]
+    partial class CinemaHallTable_Count
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,8 +84,8 @@ namespace Cinema.Infrastructure.Migrations
                     b.Property<TimeOnly?>("Duration")
                         .HasColumnType("time");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("image");
 
                     b.Property<string>("Ratings")
                         .HasColumnType("nvarchar(max)");

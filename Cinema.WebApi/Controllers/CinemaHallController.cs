@@ -3,6 +3,7 @@ using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Update.Internal;
 
 namespace Cinema.WebApi.Controllers
 {
@@ -10,13 +11,15 @@ namespace Cinema.WebApi.Controllers
     [ApiController]
     public class CinemaHallController : BaseController
     {
-        private readonly IService<CinemaHall> _cinemaHallService;
+        private readonly ICinemaHallService _cinemaHallService;
+        private readonly ISeatService _seatService;
         private readonly IMapper _mapster;
 
-        public CinemaHallController(IService<CinemaHall> cinemaHallService, IMapper mapster)
+        public CinemaHallController(ICinemaHallService cinemaHallService, IMapper mapster, ISeatService seatService)
         {
             _cinemaHallService = cinemaHallService;
             _mapster = mapster;
+            _seatService = seatService;
         }
         
         [HttpGet]
@@ -28,7 +31,7 @@ namespace Cinema.WebApi.Controllers
         }
         
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<CinemaHall>> GetById(Guid id)
+        public async Task<ActionResult<CinemaHallResponse>> GetById(Guid id)
         {
             CinemaHall? cinemaHall = await _cinemaHallService.FindByIdAsync(id);
 
@@ -37,19 +40,29 @@ namespace Cinema.WebApi.Controllers
                 return NotFound("Cinema hall not found");
             }
 
-            return Ok(cinemaHall);
+            CinemaHallResponse? cinemaHallResponse = _mapster.Map<CinemaHall, CinemaHallResponse>(cinemaHall);
+
+            return Ok(cinemaHallResponse);
         }
         
         [HttpPost]
-        public async Task<ActionResult<CinemaHall>> Create(CinemaHallDto cinemaHallDto)
+        public async Task<ActionResult<CinemaHallResponse>> Create(CinemaHallDto cinemaHallDto)
         {
             CinemaHall newCinemaHall = await _cinemaHallService.Insert(_mapster.Map<CinemaHall>(cinemaHallDto));
+
+            for (int i = 1; i <= newCinemaHall.RowsCount; i++)
+            {
+                for (int j = 1; j <= newCinemaHall.NumbersCount; j++)
+                {
+                    await _seatService.Insert(new Seat { Row = i, Number = j, CinemaHallId = newCinemaHall.Id });
+                }
+            }
 
             return CreatedAtAction(nameof(GetById), new { id = newCinemaHall.Id }, newCinemaHall);
         }
         
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<CinemaHall>> Update(Guid id, CinemaHallDto cinemaHallDto)
+        public async Task<ActionResult<CinemaHallResponse>> Update(Guid id, CinemaHallDto cinemaHallDto)
         {
             CinemaHall? existingCinemaHall = await _cinemaHallService.FindByIdAsync(id);
 

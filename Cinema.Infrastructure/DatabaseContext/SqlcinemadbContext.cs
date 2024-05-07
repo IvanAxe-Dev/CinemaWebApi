@@ -44,7 +44,6 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Director).HasMaxLength(50);
-            entity.Property(e => e.Image).HasColumnType("image");
             entity.Property(e => e.ReleaseDate).HasColumnType("datetime");
             entity.Property(e => e.Title).HasMaxLength(50);
         });
@@ -85,8 +84,9 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
 
             entity.HasOne(s => s.CinemaHall)
                 .WithMany(ch => ch.Seats)
-                .HasForeignKey(s => s.CinemaHallId); 
+                .HasForeignKey(s => s.CinemaHallId);
         });
+
         OnModelCreatingPartial(modelBuilder);
     }
 

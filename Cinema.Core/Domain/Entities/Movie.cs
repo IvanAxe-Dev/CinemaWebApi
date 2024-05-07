@@ -10,7 +10,7 @@
 
         public string? Description { get; set; }
 
-        public byte[]? Image { get; set; }
+        public string? ImageUrl { get; set; }
 
         public DateTime? ReleaseDate { get; set; }
 

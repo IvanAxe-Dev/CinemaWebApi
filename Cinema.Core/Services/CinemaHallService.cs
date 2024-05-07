@@ -8,10 +8,12 @@ namespace Cinema.Core.Services
     public class CinemaHallService : Service<CinemaHall>, ICinemaHallService
     {
         private readonly IMapper _mapster;
+        private readonly ISeatService _seatService;
 
-        public CinemaHallService(ICinemaHallRepository repository, IMapper mapster) : base(repository)
+        public CinemaHallService(ICinemaHallRepository repository, IMapper mapster, ISeatService seatService) : base(repository)
         {
             _mapster = mapster;
+            _seatService = seatService;
         }
     }
 }

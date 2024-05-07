@@ -13,5 +13,6 @@ namespace Cinema.Core.Services
         {
             _mapster = mapster;
         }
+
     }
 }
