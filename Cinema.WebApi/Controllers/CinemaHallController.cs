@@ -2,7 +2,6 @@ using Cinema.Core.Domain.Entities;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using MapsterMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
@@ -60,9 +59,8 @@ namespace Cinema.WebApi.Controllers
             }
 
             CinemaHall cinemaHall = _mapster.Map(cinemaHallDto, existingCinemaHall);
-            CinemaHall updatedCinemaHall = await _cinemaHallService.Update(cinemaHall);
 
-            return Ok(updatedCinemaHall);
+            return Ok(await _cinemaHallService.Update(cinemaHall));
         }
         
         [HttpDelete("{id:guid}")]
