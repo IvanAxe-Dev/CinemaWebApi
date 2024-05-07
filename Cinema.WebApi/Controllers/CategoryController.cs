@@ -1,19 +1,22 @@
 using Cinema.Core.Domain.Entities;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
+using Cinema.Core.Services;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : BaseController
     {
-        private readonly IService<Category> _categoryService;
+        private readonly ICategoryService _categoryService;
         private readonly IMapper _mapster;
 
-        public CategoryController(IService<Category> categoryService, IMapper mapster)
+        public CategoryController(ICategoryService categoryService, IMapper mapster)
         {
             _categoryService = categoryService;
             _mapster = mapster;
@@ -39,6 +42,7 @@ namespace Cinema.WebApi.Controllers
             return Ok(category);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Category>> Create(CategoryDto categoryDto)
         {
@@ -47,6 +51,7 @@ namespace Cinema.WebApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = newCategory.Id }, newCategory);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<Category>> Update(Guid id, CategoryDto categoryDto)
         {
@@ -63,6 +68,7 @@ namespace Cinema.WebApi.Controllers
             return Ok(updatedCategory);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {

@@ -34,7 +34,7 @@ namespace Cinema.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.CinemaHall", b =>
@@ -54,7 +54,7 @@ namespace Cinema.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CinemaHalls");
+                    b.ToTable("CinemaHalls", (string)null);
                 });
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.Movie", b =>
@@ -102,7 +102,7 @@ namespace Cinema.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Movies");
+                    b.ToTable("Movies", (string)null);
                 });
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.MovieCategory", b =>
@@ -117,7 +117,7 @@ namespace Cinema.Infrastructure.Migrations
 
                     b.HasIndex("MovieId");
 
-                    b.ToTable("MovieCategories");
+                    b.ToTable("MovieCategories", (string)null);
                 });
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.Seat", b =>
@@ -142,7 +142,7 @@ namespace Cinema.Infrastructure.Migrations
 
                     b.HasIndex("CinemaHallId");
 
-                    b.ToTable("Seats");
+                    b.ToTable("Seats", (string)null);
                 });
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.Session", b =>
@@ -174,7 +174,7 @@ namespace Cinema.Infrastructure.Migrations
 
                     b.HasIndex("MovieId");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("Sessions", (string)null);
                 });
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.Ticket", b =>
@@ -195,7 +195,7 @@ namespace Cinema.Infrastructure.Migrations
 
                     b.HasIndex("SessionId");
 
-                    b.ToTable("Tickets");
+                    b.ToTable("Tickets", (string)null);
                 });
 
             modelBuilder.Entity("Cinema.Core.Domain.IdentityEntities.ApplicationRole", b =>

@@ -26,7 +26,9 @@ public static class MapsterConfig
             
             .Map(dest => dest.Actors, src => src.Actors)
                         
-            .Map(dest => dest.Sessions, src => src.Sessions);
+            .Map(dest => dest.Sessions, src => src.Sessions)
+
+            .Map(dest=>dest.Rating, src=>src.Ratings!.DefaultIfEmpty(0).Average());
 
         TypeAdapterConfig<Category, CategoryDto>.NewConfig()
             .Map(dest => dest.Name, src => src.Name);

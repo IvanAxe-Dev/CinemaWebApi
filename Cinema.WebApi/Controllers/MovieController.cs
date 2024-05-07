@@ -1,6 +1,7 @@
 using Cinema.Core.Domain.Entities;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
+using Cinema.Core.Services;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,10 +11,10 @@ namespace Cinema.WebApi.Controllers
     [ApiController]
     public class MovieController : BaseController
     {
-        private readonly IService<Movie> _movieService;
+        private readonly IMovieService _movieService;
         private readonly IMapper _mapster;
 
-        public MovieController(IService<Movie> movieService, IMapper mapster)
+        public MovieController(IMovieService movieService, IMapper mapster)
         {
             _movieService = movieService;
             _mapster = mapster;
