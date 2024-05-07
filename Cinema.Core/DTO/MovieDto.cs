@@ -1,4 +1,4 @@
-﻿using Cinema.Core.Domain.Entities;
+﻿
 
 namespace Cinema.Core.DTO;
 
@@ -18,7 +18,7 @@ public class MovieDto
 
     public string? Director { get; set; }
 
-    public TimeOnly? Duration { get; set; }
+    public string Duration { get; set; }
 
     public int? AgeRestriction { get; set; }
 
@@ -27,5 +27,4 @@ public class MovieDto
     public string? Actors { get; set; }
 
     public List<int>? Ratings { get; set; }
-
 }

@@ -10,10 +10,10 @@ namespace Cinema.WebApi.Controllers
     [ApiController]
     public class SessionController : BaseController
     {
-        private readonly IService<Session> _sessionService;
+        private readonly ISessionService _sessionService;
         private readonly IMapper _mapster;
 
-        public SessionController(IService<Session> sessionService, IMapper mapster)
+        public SessionController(ISessionService sessionService, IMapper mapster)
         {
             _sessionService = sessionService;
             _mapster = mapster;

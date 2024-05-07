@@ -2,9 +2,9 @@ namespace Cinema.Core.DTO;
 
 public class SessionDto
 {
-    public DateOnly Date { get; set; }
+    public string Date { get; set; }
     
-    public TimeOnly StartTime { get; set; }
+    public string StartTime { get; set; }
     
     public decimal Price { get; set; }
     

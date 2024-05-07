@@ -72,7 +72,11 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
                 .WithMany(ch => ch.Sessions)
                 .HasForeignKey(s => s.CinemaHallId)
                 .OnDelete(DeleteBehavior.NoAction);
-
+            
+            entity.HasOne(s => s.Movie)
+                .WithMany(m => m.Sessions)
+                .HasForeignKey(s => s.MovieId)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<Seat>(entity =>

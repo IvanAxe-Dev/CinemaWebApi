@@ -16,7 +16,7 @@
 
         public string? Director { get; set; }
 
-        public TimeOnly? Duration { get; set; }
+        public string Duration { get; set; }
 
         public int? AgeRestriction { get; set; }
 
