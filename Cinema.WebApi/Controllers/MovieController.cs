@@ -21,15 +21,15 @@ namespace Cinema.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Movie>>> GetAll()
+        public async Task<ActionResult<List<MovieResponse>>> GetAll()
         {
             List<Movie> movies = await _movieService.GetAllAsync();
 
-            return Ok(movies);
+            return Ok(_mapster.Map<List<MovieResponse>>(movies));
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<Movie>> GetById(Guid id)
+        public async Task<ActionResult<MovieResponse>> GetById(Guid id)
         {
             Movie? movie = await _movieService.FindByIdAsync(id);
 
@@ -38,11 +38,11 @@ namespace Cinema.WebApi.Controllers
                 return NotFound("Movie not found");
             }
 
-            return Ok(movie);
+            return Ok(_mapster.Map<MovieResponse>(movie));
         }
 
         [HttpPost]
-        public async Task<ActionResult<Movie>> Create(MovieDto movieDto)
+        public async Task<ActionResult<MovieResponse>> Create(MovieDto movieDto)
         {
             Movie movie = _mapster.Map<Movie>(movieDto);
             
@@ -53,7 +53,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<Movie>> Update(Guid id, MovieDto movieDto)
+        public async Task<ActionResult<MovieResponse>> Update(Guid id, MovieDto movieDto)
         {
             Movie? existingMovie = await _movieService.FindByIdAsync(id);
 
@@ -63,8 +63,8 @@ namespace Cinema.WebApi.Controllers
             }
 
             Movie movie = _mapster.Map(movieDto, existingMovie);
-
-            return Ok(await _movieService.Update(movie));
+            
+            return Ok(_mapster.Map<MovieResponse>(await _movieService.Update(movie)));
         }
 
         [HttpDelete("{id:guid}")]

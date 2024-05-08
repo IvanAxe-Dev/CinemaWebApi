@@ -20,15 +20,15 @@ namespace Cinema.WebApi.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<List<Session>>> GetAll()
+        public async Task<ActionResult<List<SessionResponse>>> GetAll()
         {
             List<Session> sessions = await _sessionService.GetAllAsync();
 
-            return Ok(sessions);
+            return Ok(_mapster.Map<List<SessionResponse>>(sessions));
         }
         
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<Session>> GetById(Guid id)
+        public async Task<ActionResult<SessionResponse>> GetById(Guid id)
         {
             Session? session = await _sessionService.FindByIdAsync(id);
 
@@ -36,19 +36,21 @@ namespace Cinema.WebApi.Controllers
             {
                 return NotFound();
             }
+            
+            var sessionResponse = _mapster.Map<SessionResponse>(session);
 
-            return Ok(session);
+            return Ok(sessionResponse);
         }
         
         [HttpPost]
-        public async Task<ActionResult<Session>> Create(SessionDto sessionDto)
+        public async Task<ActionResult<SessionResponse>> Create(SessionDto sessionDto)
         {
             Session newSession = await _sessionService.Insert(_mapster.Map<Session>(sessionDto));
             return CreatedAtAction(nameof(GetById), new { id = newSession.Id }, newSession);
         }
         
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<Session>> Update(Guid id, SessionDto sessionDto)
+        public async Task<ActionResult<SessionResponse>> Update(Guid id, SessionDto sessionDto)
         {
             Session? existingSession = await _sessionService.FindByIdAsync(id);
 
@@ -59,7 +61,7 @@ namespace Cinema.WebApi.Controllers
 
             Session session = _mapster.Map(sessionDto, existingSession);
 
-            return Ok(await _sessionService.Update(session));
+            return Ok(_mapster.Map<SessionResponse>(await _sessionService.Update(session)));
         }
         
         [HttpDelete("{id:guid}")]
