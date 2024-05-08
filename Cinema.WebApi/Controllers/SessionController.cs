@@ -46,7 +46,7 @@ namespace Cinema.WebApi.Controllers
         public async Task<ActionResult<SessionResponse>> Create(SessionDto sessionDto)
         {
             Session newSession = await _sessionService.Insert(_mapster.Map<Session>(sessionDto));
-            return CreatedAtAction(nameof(GetById), new { id = newSession.Id }, newSession);
+            return CreatedAtAction(nameof(GetById), new { id = newSession.Id }, _mapster.Map<SessionResponse>(newSession));
         }
         
         [HttpPut("{id:guid}")]

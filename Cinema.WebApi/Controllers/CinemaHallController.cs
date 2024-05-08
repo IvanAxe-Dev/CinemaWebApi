@@ -23,11 +23,11 @@ namespace Cinema.WebApi.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<List<CinemaHall>>> GetAll()
+        public async Task<ActionResult<List<CinemaHallResponse>>> GetAll()
         {
             List<CinemaHall> cinemaHalls = await _cinemaHallService.GetAllAsync();
 
-            return Ok(cinemaHalls);
+            return Ok(_mapster.Map<List<CinemaHallResponse>>(cinemaHalls));
         }
         
         [HttpGet("{id:guid}")]
@@ -58,7 +58,7 @@ namespace Cinema.WebApi.Controllers
                 }
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = newCinemaHall.Id }, newCinemaHall);
+            return CreatedAtAction(nameof(GetById), new { id = newCinemaHall.Id }, _mapster.Map<CinemaHallResponse>(newCinemaHall));
         }
         
         [HttpPut("{id:guid}")]

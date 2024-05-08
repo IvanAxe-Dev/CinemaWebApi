@@ -49,7 +49,7 @@ namespace Cinema.WebApi.Controllers
             Movie newMovie = await _movieService.Insert(movie);
 
 
-            return CreatedAtAction(nameof(GetById), new { id = newMovie.Id }, newMovie);
+            return CreatedAtAction(nameof(GetById), new { id = newMovie.Id }, _mapster.Map<MovieResponse>(newMovie));
         }
 
         [HttpPut("{id:guid}")]

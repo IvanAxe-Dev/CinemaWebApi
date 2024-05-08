@@ -10,10 +10,8 @@ namespace Cinema.Core.Domain.Entities
         public int? RowsCount { get; set; }
         public int? NumbersCount { get; set; }
 
-        [JsonIgnore]
         public ICollection<Seat> Seats { get; set; } = new List<Seat>();
 
-        [JsonIgnore]
         public ICollection<Session> Sessions { get; set; } = new List<Session>();
     }
 }

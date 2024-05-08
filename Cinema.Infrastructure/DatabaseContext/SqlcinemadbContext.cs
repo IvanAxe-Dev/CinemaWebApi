@@ -50,7 +50,7 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
 
         modelBuilder.Entity<MovieCategory>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(mc => mc.Id);
 
             entity.HasOne(d => d.Category).WithMany()
                 .HasForeignKey(d => d.CategoryId)

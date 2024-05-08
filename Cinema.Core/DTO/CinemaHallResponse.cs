@@ -9,17 +9,16 @@ using Newtonsoft.Json;
 
 namespace Cinema.Core.DTO
 {
-    public class CinemaHallResponse : BaseEntity
+    public class CinemaHallResponse
     {
+        public Guid Id { get; set; }
         public Graphics? Graphics { get; set; }
         public Privilege? Privilege { get; set; }
         public int? RowsCount { get; set; }
         public int? NumbersCount { get; set; }
-
-        [JsonIgnore]
+        
         public ICollection<SeatResponse> Seats { get; set; } = new List<SeatResponse>();
-
-        [JsonIgnore]
-        public ICollection<SessionDto> SessionsDto { get; set; } = new List<SessionDto>();
+        
+        public ICollection<SessionResponse> Sessions { get; set; } = new List<SessionResponse>();
     }
 }

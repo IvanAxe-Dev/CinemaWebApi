@@ -4,6 +4,7 @@ using Cinema.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cinema.Infrastructure.Migrations
 {
     [DbContext(typeof(SqlcinemadbContext))]
-    partial class SqlcinemadbContextModelSnapshot : ModelSnapshot
+    [Migration("20240508132016_MovieCategory_table_id")]
+    partial class MovieCategory_table_id
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,17 +114,14 @@ namespace Cinema.Infrastructure.Migrations
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.MovieCategory", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("MovieId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
