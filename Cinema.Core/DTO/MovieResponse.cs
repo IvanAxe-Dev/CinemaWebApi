@@ -29,4 +29,6 @@ public class MovieResponse
     public List<int>? Ratings { get; set; }
     
     public List<SessionResponse> Sessions { get; set; } = new List<SessionResponse>();
+
+    public List<CategoryResponse> Categories { get; set; } = new List<CategoryResponse>();
 }

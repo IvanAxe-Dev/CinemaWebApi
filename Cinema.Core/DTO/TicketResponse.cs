@@ -1,8 +1,8 @@
 ﻿namespace Cinema.Core.DTO;
 
-public class TicketDto
+public class TicketResponse
 {
+    public Guid Id { get; set; }
     public Guid SeatId { get; set; }
     public Guid SessionId { get; set; }
-    public Guid ApplicationUserId { get; set; }
 }

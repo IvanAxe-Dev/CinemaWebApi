@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class MovieCategoriesController : ControllerBase
@@ -41,8 +42,8 @@ namespace Cinema.WebApi.Controllers
             
             return Ok(_mapster.Map<MovieCategoryResponse>(movieCategory));
         }
-        
-        // [Authorize(Roles = "Admin")]
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<MovieCategoryResponse>> Create(MovieCategoryDto movieCategoryDto)
         {
@@ -51,7 +52,7 @@ namespace Cinema.WebApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = movieCategory.Id }, _mapster.Map<MovieCategoryResponse>(movieCategory));
         }
 
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<MovieCategoryResponse>> Update(Guid id, MovieCategoryDto movieCategoryDto)
         {
@@ -68,8 +69,8 @@ namespace Cinema.WebApi.Controllers
             
             return Ok(_mapster.Map<MovieCategoryResponse>(movieCategory));
         }
-        
-        // [Authorize(Roles = "Admin")]
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {

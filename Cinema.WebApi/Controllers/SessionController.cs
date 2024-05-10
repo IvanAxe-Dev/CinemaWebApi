@@ -2,10 +2,12 @@ using Cinema.Core.Domain.Entities;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class SessionController : BaseController
@@ -41,14 +43,16 @@ namespace Cinema.WebApi.Controllers
 
             return Ok(sessionResponse);
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<SessionResponse>> Create(SessionDto sessionDto)
         {
             Session newSession = await _sessionService.Insert(_mapster.Map<Session>(sessionDto));
             return CreatedAtAction(nameof(GetById), new { id = newSession.Id }, _mapster.Map<SessionResponse>(newSession));
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<SessionResponse>> Update(Guid id, SessionDto sessionDto)
         {
@@ -63,7 +67,8 @@ namespace Cinema.WebApi.Controllers
 
             return Ok(_mapster.Map<SessionResponse>(await _sessionService.Update(session)));
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {

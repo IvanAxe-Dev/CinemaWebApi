@@ -10,10 +10,10 @@ namespace Cinema.WebApi.Controllers
     [ApiController]
     public class TicketController : ControllerBase
     {
-        private readonly IService<Ticket> _ticketService;
+        private readonly ITicketService _ticketService;
         private readonly IMapper _mapster;
 
-        public TicketController(IService<Ticket> ticketService, IMapper mapster)
+        public TicketController(ITicketService ticketService, IMapper mapster)
         {
             _ticketService = ticketService;
             _mapster = mapster;
