@@ -15,7 +15,6 @@ namespace Cinema.Infrastructure.Repositories
         {
 
         }
-
         protected override IQueryable<Movie> PrepareDbSet()
         {
             return base.PrepareDbSet()

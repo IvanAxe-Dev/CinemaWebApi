@@ -6,5 +6,6 @@
         public Seat Seat { get; set; }
         public Guid SessionId { get; set; }
         public Session Session { get; set; }
+        public Guid ApplicationUserId { get; set; }
     }
 }

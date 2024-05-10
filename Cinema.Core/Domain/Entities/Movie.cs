@@ -10,13 +10,13 @@
 
         public string? Description { get; set; }
 
-        public byte[]? Image { get; set; }
+        public string? ImageUrl { get; set; }
 
         public DateTime? ReleaseDate { get; set; }
 
         public string? Director { get; set; }
 
-        public TimeOnly? Duration { get; set; }
+        public string Duration { get; set; }
 
         public int? AgeRestriction { get; set; }
 

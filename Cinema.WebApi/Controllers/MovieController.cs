@@ -1,6 +1,7 @@
 using Cinema.Core.Domain.Entities;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
+using Cinema.Core.Services;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,27 +11,27 @@ namespace Cinema.WebApi.Controllers
     [ApiController]
     public class MovieController : BaseController
     {
-        private readonly IService<Movie> _movieService;
+        private readonly IMovieService _movieService;
         private readonly IMapper _mapster;
 
-        public MovieController(IService<Movie> movieService, IMapper mapster)
+        public MovieController(IMovieService movieService, IMapper mapster)
         {
             _movieService = movieService;
             _mapster = mapster;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Movie>>> GetAll()
+        public async Task<ActionResult<List<MovieResponse>>> GetAll()
         {
-            List<Movie> movies = await _movieService.GetAllAsync();
+            List<MovieResponse> movies = await _movieService.GetAllMoviesWithCategories();
 
             return Ok(movies);
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<Movie>> GetById(Guid id)
+        public async Task<ActionResult<MovieResponse>> GetById(Guid id)
         {
-            Movie? movie = await _movieService.FindByIdAsync(id);
+            MovieResponse? movie = await _movieService.GetMovieWithCategoriesById(id);
 
             if (movie == null)
             {
@@ -41,16 +42,18 @@ namespace Cinema.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Movie>> Create(MovieDto movieDto)
+        public async Task<ActionResult<MovieResponse>> Create(MovieDto movieDto)
         {
-            Movie newMovie = await _movieService.Insert(_mapster.Map<Movie>(movieDto));
+            Movie movie = _mapster.Map<Movie>(movieDto);
+            
+            Movie newMovie = await _movieService.Insert(movie);
 
 
-            return CreatedAtAction(nameof(GetById), new { id = newMovie.Id }, newMovie);
+            return CreatedAtAction(nameof(GetById), new { id = newMovie.Id }, _mapster.Map<MovieResponse>(newMovie));
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<Movie>> Update(Guid id, MovieDto movieDto)
+        public async Task<ActionResult<MovieResponse>> Update(Guid id, MovieDto movieDto)
         {
             Movie? existingMovie = await _movieService.FindByIdAsync(id);
 
@@ -60,8 +63,8 @@ namespace Cinema.WebApi.Controllers
             }
 
             Movie movie = _mapster.Map(movieDto, existingMovie);
-
-            return Ok(await _movieService.Update(movie));
+            
+            return Ok(_mapster.Map<MovieResponse>(await _movieService.Update(movie)));
         }
 
         [HttpDelete("{id:guid}")]

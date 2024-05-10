@@ -22,11 +22,6 @@ namespace Cinema.Core.DTO
         [Compare(nameof(Password), ErrorMessage = "Password and Repeat Password do not match")]
         public string RepeatPassword { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Phone Number can't be blank")]
-        [Phone(ErrorMessage = "Phone Number should be in proper phone number format")]
-        [Remote(action: "IsEmailAlreadyRegistered", controller: "Account", ErrorMessage = "Email is already in use")]
-        public string PhoneNumber { get; set; } = string.Empty;
-
         public UserRoleOptions Role { get; set; }
 
     }

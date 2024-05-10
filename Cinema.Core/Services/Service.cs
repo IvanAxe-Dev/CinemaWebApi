@@ -26,7 +26,6 @@ public class Service<T> : IService<T> where T : class, IBaseEntity
 
     public virtual async Task<T> Insert(T entity)
     {
-        entity.Id = Guid.NewGuid();
         await _repository.Post(entity);
         await _repository.SaveChangesAsync();
         return entity;

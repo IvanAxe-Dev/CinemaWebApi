@@ -46,10 +46,13 @@ namespace Cinema.Infrastructure.Migrations
                     b.Property<int?>("Graphics")
                         .HasColumnType("int");
 
+                    b.Property<int?>("NumbersCount")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Privilege")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SeatsCount")
+                    b.Property<int?>("RowsCount")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -75,11 +78,12 @@ namespace Cinema.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<TimeOnly?>("Duration")
-                        .HasColumnType("time");
+                    b.Property<string>("Duration")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("image");
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Ratings")
                         .HasColumnType("nvarchar(max)");
@@ -107,11 +111,17 @@ namespace Cinema.Infrastructure.Migrations
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.MovieCategory", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("MovieId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
@@ -156,8 +166,9 @@ namespace Cinema.Infrastructure.Migrations
                     b.Property<Guid>("CinemaHallId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
+                    b.Property<string>("Date")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("MovieId")
                         .HasColumnType("uniqueidentifier");
@@ -165,8 +176,9 @@ namespace Cinema.Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<TimeOnly>("StartTime")
-                        .HasColumnType("time");
+                    b.Property<string>("StartTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -183,6 +195,9 @@ namespace Cinema.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ApplicationUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("SeatId")
                         .HasColumnType("uniqueidentifier");
 
@@ -190,6 +205,8 @@ namespace Cinema.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("SeatId");
 
@@ -445,7 +462,7 @@ namespace Cinema.Infrastructure.Migrations
                     b.HasOne("Cinema.Core.Domain.Entities.Movie", "Movie")
                         .WithMany("Sessions")
                         .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("CinemaHall");
@@ -455,6 +472,10 @@ namespace Cinema.Infrastructure.Migrations
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.Ticket", b =>
                 {
+                    b.HasOne("Cinema.Core.Domain.IdentityEntities.ApplicationUser", null)
+                        .WithMany("UserTickets")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Cinema.Core.Domain.Entities.Seat", "Seat")
                         .WithMany()
                         .HasForeignKey("SeatId")
@@ -533,6 +554,11 @@ namespace Cinema.Infrastructure.Migrations
             modelBuilder.Entity("Cinema.Core.Domain.Entities.Movie", b =>
                 {
                     b.Navigation("Sessions");
+                });
+
+            modelBuilder.Entity("Cinema.Core.Domain.IdentityEntities.ApplicationUser", b =>
+                {
+                    b.Navigation("UserTickets");
                 });
 #pragma warning restore 612, 618
         }

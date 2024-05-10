@@ -27,6 +27,7 @@ builder.Services.AddControllers(//options =>
 .AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    // options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -59,9 +60,23 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.Services.AddLogging();
 
-builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddTransient(typeof(IService<>), typeof(Service<>));
 builder.Services.AddTransient<IJwtService, JwtService>();
+
+builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICinemaHallService, CinemaHallService>();
+builder.Services.AddScoped<ISeatService, SeatService>();
+builder.Services.AddScoped<ISessionService, SessionService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<IMovieCategoryService, MovieCategoryService>();
+
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICinemaHallRepository, CinemaHallRepository>();
+builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+builder.Services.AddScoped<IMovieCategoryRepository, MovieCategoryRepository>();
 
 builder.Services.AddMapster();
 MapsterConfig.Configure();

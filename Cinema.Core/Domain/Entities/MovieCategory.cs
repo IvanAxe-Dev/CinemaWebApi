@@ -1,6 +1,6 @@
 ﻿namespace Cinema.Core.Domain.Entities
 {
-    public partial class MovieCategory
+    public partial class MovieCategory : BaseEntity
     {
         public Guid CategoryId { get; set; }
 

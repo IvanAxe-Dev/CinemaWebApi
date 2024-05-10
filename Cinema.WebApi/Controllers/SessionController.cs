@@ -2,33 +2,35 @@ using Cinema.Core.Domain.Entities;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class SessionController : BaseController
     {
-        private readonly IService<Session> _sessionService;
+        private readonly ISessionService _sessionService;
         private readonly IMapper _mapster;
 
-        public SessionController(IService<Session> sessionService, IMapper mapster)
+        public SessionController(ISessionService sessionService, IMapper mapster)
         {
             _sessionService = sessionService;
             _mapster = mapster;
         }
         
         [HttpGet]
-        public async Task<ActionResult<List<Session>>> GetAll()
+        public async Task<ActionResult<List<SessionResponse>>> GetAll()
         {
             List<Session> sessions = await _sessionService.GetAllAsync();
 
-            return Ok(sessions);
+            return Ok(_mapster.Map<List<SessionResponse>>(sessions));
         }
         
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<Session>> GetById(Guid id)
+        public async Task<ActionResult<SessionResponse>> GetById(Guid id)
         {
             Session? session = await _sessionService.FindByIdAsync(id);
 
@@ -36,19 +38,23 @@ namespace Cinema.WebApi.Controllers
             {
                 return NotFound();
             }
+            
+            var sessionResponse = _mapster.Map<SessionResponse>(session);
 
-            return Ok(session);
+            return Ok(sessionResponse);
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<Session>> Create(SessionDto sessionDto)
+        public async Task<ActionResult<SessionResponse>> Create(SessionDto sessionDto)
         {
             Session newSession = await _sessionService.Insert(_mapster.Map<Session>(sessionDto));
-            return CreatedAtAction(nameof(GetById), new { id = newSession.Id }, newSession);
+            return CreatedAtAction(nameof(GetById), new { id = newSession.Id }, _mapster.Map<SessionResponse>(newSession));
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<Session>> Update(Guid id, SessionDto sessionDto)
+        public async Task<ActionResult<SessionResponse>> Update(Guid id, SessionDto sessionDto)
         {
             Session? existingSession = await _sessionService.FindByIdAsync(id);
 
@@ -59,9 +65,10 @@ namespace Cinema.WebApi.Controllers
 
             Session session = _mapster.Map(sessionDto, existingSession);
 
-            return Ok(await _sessionService.Update(session));
+            return Ok(_mapster.Map<SessionResponse>(await _sessionService.Update(session)));
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {

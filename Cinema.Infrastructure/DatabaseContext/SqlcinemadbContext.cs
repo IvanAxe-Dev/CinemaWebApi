@@ -44,14 +44,13 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Director).HasMaxLength(50);
-            entity.Property(e => e.Image).HasColumnType("image");
             entity.Property(e => e.ReleaseDate).HasColumnType("datetime");
             entity.Property(e => e.Title).HasMaxLength(50);
         });
 
         modelBuilder.Entity<MovieCategory>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(mc => mc.Id);
 
             entity.HasOne(d => d.Category).WithMany()
                 .HasForeignKey(d => d.CategoryId)
@@ -73,7 +72,11 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
                 .WithMany(ch => ch.Sessions)
                 .HasForeignKey(s => s.CinemaHallId)
                 .OnDelete(DeleteBehavior.NoAction);
-
+            
+            entity.HasOne(s => s.Movie)
+                .WithMany(m => m.Sessions)
+                .HasForeignKey(s => s.MovieId)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<Seat>(entity =>
@@ -85,8 +88,9 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
 
             entity.HasOne(s => s.CinemaHall)
                 .WithMany(ch => ch.Seats)
-                .HasForeignKey(s => s.CinemaHallId); 
+                .HasForeignKey(s => s.CinemaHallId);
         });
+
         OnModelCreatingPartial(modelBuilder);
     }
 

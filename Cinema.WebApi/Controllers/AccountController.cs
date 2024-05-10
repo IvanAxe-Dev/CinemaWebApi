@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Security.Cryptography;
+using Cinema.Core.Domain.Entities;
 using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.DTO;
 using Cinema.Core.Enums;
@@ -49,15 +50,15 @@ namespace Cinema.WebApi.Controllers
                 return Problem(errorMessage);
             }
 
-            var user = _mapster.Map<ApplicationUser>(registerDTO);
-            
-            // ApplicationUser user = new ApplicationUser
-            // {
-            //     UserName = registerDTO.Username,
-            //     Email = registerDTO.Email,
-            //     PhoneNumber = registerDTO.PhoneNumber,
-            //     Role = registerDTO.Role
-            // };
+            //var user = _mapster.Map<ApplicationUser>(registerDTO);
+
+            ApplicationUser user = new ApplicationUser
+            {
+                UserName = registerDTO.Username,
+                Email = registerDTO.Email,
+                Role = registerDTO.Role,
+                UserTickets = new List<Ticket>()
+            };
 
             var result = await _userManager.CreateAsync(user, registerDTO.Password);
             if (result.Succeeded)
@@ -178,6 +179,7 @@ namespace Cinema.WebApi.Controllers
             return Ok(authenticationResponse);
         }
 
+        [Authorize(Roles = "Admin")]
         private async Task CreateUserRole(RegisterDTO registerDTO, ApplicationUser user)
         {
 

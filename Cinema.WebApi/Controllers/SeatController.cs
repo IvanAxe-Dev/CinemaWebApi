@@ -10,10 +10,10 @@ namespace Cinema.WebApi.Controllers
     [ApiController]
     public class SeatController : ControllerBase
     {
-        private readonly IService<Seat> _seatService;
+        private readonly ISeatService _seatService;
         private readonly IMapper _mapster;
 
-        public SeatController(IService<Seat> seatService, IMapper mapster)
+        public SeatController(ISeatService seatService, IMapper mapster)
         {
             _seatService = seatService;
             _mapster = mapster;
