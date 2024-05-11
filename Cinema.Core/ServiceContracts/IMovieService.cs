@@ -9,5 +9,7 @@ namespace Cinema.Core.ServiceContracts
         Task<List<MovieResponse>> GetAllMoviesWithCategories();
         
         Task RateMovie(Guid movieId, int rating);
+
+        Task<List<MovieResponse>> GetRecommendedMovies(Guid userId);
     }
 }

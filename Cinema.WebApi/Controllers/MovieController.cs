@@ -71,6 +71,14 @@ namespace Cinema.WebApi.Controllers
             
             return Ok("Movie rated successfully");
         }
+        
+        [HttpGet("{userId:guid}/recommended")]
+        public async Task<ActionResult<List<MovieResponse>>> GetRecommendedMovies(Guid userId)
+        {
+            List<MovieResponse> movies = await _movieService.GetRecommendedMovies(userId);
+
+            return Ok(movies);
+        }
 
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<MovieResponse>> Update(Guid id, MovieDto movieDto)
