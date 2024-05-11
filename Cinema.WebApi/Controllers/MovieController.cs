@@ -51,6 +51,26 @@ namespace Cinema.WebApi.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = newMovie.Id }, _mapster.Map<MovieResponse>(newMovie));
         }
+        
+        [HttpPost("{id:guid}/rate")]
+        public async Task<ActionResult<MovieResponse>> Rate(Guid id, [FromBody] int rating)
+        {
+            if (rating < 1 || rating > 10)
+            {
+                return BadRequest("Rating must be between 1 and 5");
+            }
+            
+            Movie? movie = await _movieService.FindByIdAsync(id);
+            
+            if (movie == null)
+            {
+                return NotFound("Movie not found");
+            }
+            
+            await _movieService.RateMovie(id, rating);
+            
+            return Ok("Movie rated successfully");
+        }
 
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<MovieResponse>> Update(Guid id, MovieDto movieDto)

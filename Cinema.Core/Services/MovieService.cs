@@ -61,5 +61,22 @@ namespace Cinema.Core.Services
 
             return moviesResponses;
         }
+        
+        public async Task RateMovie(Guid movieId, int rating)
+        {
+            Movie? movie = await FindByIdAsync(movieId);
+
+            if (movie.Ratings == null)
+            {
+                movie.Ratings = new List<int>();
+            }
+            
+            if (movie != null)
+            {
+                movie.Ratings.Add(rating);
+
+                await Update(movie);
+            }
+        }
     }
 }
