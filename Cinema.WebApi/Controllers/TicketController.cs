@@ -8,9 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Cinema.WebApi.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TicketController : ControllerBase
+    public class TicketController : BaseController
     {
         private readonly ITicketService _ticketService;
         private readonly IMapper _mapster;
@@ -22,7 +20,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<ActionResult<List<Ticket>>> GetAllForAdmin()
         {
             List<Ticket> tickets = await _ticketService.GetAllAsync();
@@ -32,7 +30,7 @@ namespace Cinema.WebApi.Controllers
 
         //add user identification as in [movie]
         [Authorize(Roles = "User")]
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<ActionResult<List<Ticket>>> GetAllForUser()
         {
             List<Ticket> tickets = await _ticketService.GetAllAsync();
@@ -41,8 +39,8 @@ namespace Cinema.WebApi.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<Ticket>> GetAllForAdmin(Guid id)
+        [HttpGet("[action]/{id:guid}")]
+        public async Task<ActionResult<Ticket>> GetByIdForAdmin(Guid id)
         {
             Ticket? ticket = await _ticketService.FindByIdAsync(id);
 
@@ -56,7 +54,7 @@ namespace Cinema.WebApi.Controllers
 
         //add user identification check as in [movie]
         [Authorize(Roles = "User")]
-        [HttpGet("{id:guid}")]
+        [HttpGet("[action]/{id:guid}")]
         public async Task<ActionResult<Ticket>> GetByIdForUser(Guid id)
         {
             Ticket? ticket = await _ticketService.FindByIdAsync(id);

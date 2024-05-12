@@ -9,9 +9,6 @@ namespace Cinema.Core.Domain.Entities
         public Privilege? Privilege { get; set; }
         public int? RowsCount { get; set; }
         public int? NumbersCount { get; set; }
-
-        public ICollection<Seat> Seats { get; set; } = new List<Seat>();
-
         public ICollection<Session> Sessions { get; set; } = new List<Session>();
     }
 }
