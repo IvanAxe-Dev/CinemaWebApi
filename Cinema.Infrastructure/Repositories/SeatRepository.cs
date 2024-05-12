@@ -21,5 +21,13 @@ namespace Cinema.Infrastructure.Repositories
             return base.PrepareDbSet()
                 .Include(x => x.Session);
         }
+
+        public async Task PostRange(List<Seat> entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
+            await dbSet.AddRangeAsync(entity);
+        }
     }
 }

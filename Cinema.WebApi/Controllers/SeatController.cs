@@ -47,7 +47,15 @@ namespace Cinema.WebApi.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = newSeat.Id }, newSeat);
         }
-        
+
+        [HttpPost("{sessionId:guid}")]
+        public async Task<ActionResult<List<SeatResponse>>> CreateRange(Guid sessionId)
+        {
+            var seats = await _seatService.CreateSeatsForSession(sessionId);
+
+            return Ok(seats);
+        }
+
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<Seat>> Update(Guid id, SeatDto seatDto)
         {

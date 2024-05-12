@@ -52,14 +52,6 @@ namespace Cinema.WebApi.Controllers
 
             Session sessionWithIncludes = await _sessionService.FindByIdAsync(newSession.Id);
 
-            for (int i = 1; i <= newSession.CinemaHall.RowsCount; i++)
-            {
-                for (int j = 1; j <= newSession.CinemaHall.NumbersCount; j++)
-                {
-                    sessionWithIncludes.Seats.Add(new Seat { Row = i, Number = j, SessionId = newSession.Id });
-                }
-            }
-
             sessionWithIncludes.AvailableSeats =
                 (int)sessionWithIncludes.CinemaHall.RowsCount! * (int)sessionWithIncludes.CinemaHall.NumbersCount!;
 
