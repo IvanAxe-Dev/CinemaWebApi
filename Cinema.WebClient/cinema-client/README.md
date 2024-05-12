@@ -1,5 +1,18 @@
 # cinema-client
 
+## Vue installation
+
+Make sure you have npm installed. [Installation](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+```
+npm -v
+```
+
+Install latest Vue CLI. [Installation](https://v3.ru.vuejs.org/guide/installation.html#cli).
+Check the current version.
+```
+vue -V
+```
+
 ## Project setup
 ```
 npm install
