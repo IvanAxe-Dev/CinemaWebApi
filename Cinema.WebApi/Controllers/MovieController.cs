@@ -45,9 +45,10 @@ namespace Cinema.WebApi.Controllers
         public async Task<ActionResult<MovieResponse>> Create(MovieDto movieDto)
         {
             Movie movie = _mapster.Map<Movie>(movieDto);
-            
-            Movie newMovie = await _movieService.Insert(movie);
 
+            movie.Id = Guid.NewGuid();
+
+            Movie newMovie = await _movieService.Insert(movie);
 
             return CreatedAtAction(nameof(GetById), new { id = newMovie.Id }, _mapster.Map<MovieResponse>(newMovie));
         }

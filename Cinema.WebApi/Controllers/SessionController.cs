@@ -44,12 +44,28 @@ namespace Cinema.WebApi.Controllers
             return Ok(sessionResponse);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<SessionResponse>> Create(SessionDto sessionDto)
         {
             Session newSession = await _sessionService.Insert(_mapster.Map<Session>(sessionDto));
-            return CreatedAtAction(nameof(GetById), new { id = newSession.Id }, _mapster.Map<SessionResponse>(newSession));
+
+            Session sessionWithIncludes = await _sessionService.FindByIdAsync(newSession.Id);
+
+            for (int i = 1; i <= newSession.CinemaHall.RowsCount; i++)
+            {
+                for (int j = 1; j <= newSession.CinemaHall.NumbersCount; j++)
+                {
+                    sessionWithIncludes.Seats.Add(new Seat { Row = i, Number = j, SessionId = newSession.Id });
+                }
+            }
+
+            sessionWithIncludes.AvailableSeats =
+                (int)sessionWithIncludes.CinemaHall.RowsCount! * (int)sessionWithIncludes.CinemaHall.NumbersCount!;
+
+            await _sessionService.Update(sessionWithIncludes);
+
+            return CreatedAtAction(nameof(GetById), new { id = newSession.Id }, _mapster.Map<SessionResponse>(sessionWithIncludes));
         }
 
         [Authorize(Roles = "Admin")]

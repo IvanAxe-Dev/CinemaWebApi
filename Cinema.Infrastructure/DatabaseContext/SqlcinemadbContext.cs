@@ -63,9 +63,15 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
                 .HasConstraintName("FK_MovieCategories_Movies");
         });
 
+        modelBuilder.Entity<CinemaHall>(entity =>
+        {
+            entity.HasKey(ch => ch.Id);
+        });
+
         modelBuilder.Entity<Session>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasKey(s => s.Id);
+
             entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(s => s.CinemaHall)
@@ -86,9 +92,10 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
             entity.Property(e => e.Row).IsRequired();
             entity.Property(e => e.Number).IsRequired();
 
-            entity.HasOne(s => s.CinemaHall)
+            entity.HasOne(s => s.Session)
                 .WithMany(ch => ch.Seats)
-                .HasForeignKey(s => s.CinemaHallId);
+                .HasForeignKey(s => s.SessionId)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         OnModelCreatingPartial(modelBuilder);

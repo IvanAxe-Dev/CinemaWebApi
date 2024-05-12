@@ -13,10 +13,7 @@ namespace Cinema.Core.Domain.Entities
         public int Number { get; set; }
         public bool IsBooked { get; set; } = false;
 
-        [JsonIgnore]
-        public Guid CinemaHallId { get; set; }
-
-        [JsonIgnore]
-        public CinemaHall CinemaHall { get; set; } 
+        public Guid SessionId { get; set; }
+        public Session Session { get; set; }
     }
 }
