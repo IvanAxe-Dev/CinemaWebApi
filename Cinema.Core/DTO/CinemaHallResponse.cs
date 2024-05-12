@@ -16,9 +16,6 @@ namespace Cinema.Core.DTO
         public Privilege? Privilege { get; set; }
         public int? RowsCount { get; set; }
         public int? NumbersCount { get; set; }
-        
-        public ICollection<SeatResponse> Seats { get; set; } = new List<SeatResponse>();
-        
         public ICollection<SessionResponse> Sessions { get; set; } = new List<SessionResponse>();
     }
 }

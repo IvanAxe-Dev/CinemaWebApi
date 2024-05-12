@@ -19,7 +19,7 @@ namespace Cinema.Infrastructure.Repositories
         protected override IQueryable<Seat> PrepareDbSet()
         {
             return base.PrepareDbSet()
-                .Include(x => x.CinemaHall);
+                .Include(x => x.Session);
         }
     }
 }
