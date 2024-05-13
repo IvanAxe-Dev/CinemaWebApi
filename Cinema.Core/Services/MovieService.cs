@@ -65,8 +65,17 @@ namespace Cinema.Core.Services
         public async Task<List<MovieResponse>> TakeNLatestMovies(int? moviesToTake)
         {
             var movies = await GetAllMoviesWithCategories();
-            
+
             var latestMovies = movies.OrderByDescending(movie => movie.RentalStartDate).ToList();
+
+            //var movies = await GetAllAsync();
+
+            //var latestMovies = movies
+            //    .Select(m =>
+            //        m.Sessions
+            //            .OrderByDescending(s => s.Date.Date)
+            //            .ThenByDescending(s => s.StartTime.Hour)
+            //            .ThenByDescending(s => s.StartTime.Minute));
 
             if (moviesToTake is not null)
             {
@@ -76,5 +85,38 @@ namespace Cinema.Core.Services
             return _mapster.Map<List<MovieResponse>>(latestMovies);
         }
 
+        public async Task<List<MovieResponse>> GetFilteredMovies(GetMoviesQuery request)
+        {
+            var movies = await GetAllMoviesWithCategories();
+
+            if (request.Categories is not null)
+            {
+                string[] categories = request.Categories.Split(',').Select(c => c.ToLower()).ToArray();
+                movies = movies
+                    .Where(m => m.Categories
+                        .Any(c => categories
+                            .Contains(c.Name)))
+                    .ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                movies = movies.Where(m => m.Title.Contains(request.SearchTerm)).ToList();
+            }
+
+            if (request.DateStartInterval is not null && request.DateEndInterval is not null)
+            {
+                movies = movies.Where(m =>
+                    m.Sessions.Any(s => s.Date >= DateOnly.FromDateTime((DateTime)request.DateStartInterval) && s.Date <= DateOnly.FromDateTime((DateTime)request.DateEndInterval))).ToList();
+            }
+
+            if (request.TimeStartInterval is not null && request.TimeEndInterval is not null)
+            {
+                movies = movies.Where(m =>
+                    m.Sessions.Any(s => s.StartTime >= TimeOnly.FromDateTime((DateTime)request.TimeStartInterval) && s.StartTime <= TimeOnly.FromDateTime((DateTime)request.TimeEndInterval))).ToList();
+            }
+
+            return movies;
+        }
     }
 }

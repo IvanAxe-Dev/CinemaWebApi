@@ -8,6 +8,7 @@ namespace Cinema.Core.ServiceContracts
         Task<MovieResponse?> GetMovieWithCategoriesById(Guid movieId);
         Task<List<MovieResponse>> GetAllMoviesWithCategories();
         Task<List<MovieResponse>> TakeNLatestMovies(int? moviesToTake);
+        Task<List<MovieResponse>> GetFilteredMovies(GetMoviesQuery request);
 
     }
 }
