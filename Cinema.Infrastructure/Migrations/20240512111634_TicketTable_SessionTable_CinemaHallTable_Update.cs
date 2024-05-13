@@ -39,12 +39,7 @@ namespace Cinema.Infrastructure.Migrations
                 oldType: "uniqueidentifier",
                 oldNullable: true);
 
-            migrationBuilder.AddColumn<DateTime>(
-                name: "BookedAt",
-                table: "Tickets",
-                type: "datetime2",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Seats_Sessions_SessionId",
