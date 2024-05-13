@@ -36,7 +36,7 @@ public static class MapsterConfig
 
             .Map(dest => dest.MovieId, src => src.MovieId)
 
-            .Map(dest => dest.StartTime, src => TimeOnly.FromDateTime(src.StartTime))
+            .Map(dest => dest.StartTime, src => TimeOnly.FromDateTime(src.StartTime).ToShortTimeString())
 
             .Map(dest => dest.Date, src => DateOnly.FromDateTime(src.Date))
 
