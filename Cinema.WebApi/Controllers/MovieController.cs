@@ -81,5 +81,13 @@ namespace Cinema.WebApi.Controllers
             await _movieService.DeleteAsync(movie);
             return NoContent();
         }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<MovieResponse>>> GetLatestMovies([FromQuery] int? moviesToTake)
+        {
+            List<MovieResponse> movies = await _movieService.TakeNLatestMovies(moviesToTake);
+
+            return Ok(movies);
+        }
     }
 }

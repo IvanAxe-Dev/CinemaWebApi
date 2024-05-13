@@ -61,5 +61,20 @@ namespace Cinema.Core.Services
 
             return moviesResponses;
         }
+
+        public async Task<List<MovieResponse>> TakeNLatestMovies(int? moviesToTake)
+        {
+            var movies = await GetAllMoviesWithCategories();
+            
+            var latestMovies = movies.OrderByDescending(movie => movie.RentalStartDate).ToList();
+
+            if (moviesToTake is not null)
+            {
+                latestMovies = latestMovies.Take((int)moviesToTake).ToList();
+            }
+
+            return _mapster.Map<List<MovieResponse>>(latestMovies);
+        }
+
     }
 }
