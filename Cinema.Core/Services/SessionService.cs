@@ -9,13 +9,11 @@ namespace Cinema.Core.Services
     {
         private readonly ISessionRepository _repository;
         private readonly IMapper _mapster;
-        private readonly ISeatService _seatService;
 
-        public SessionService(ISessionRepository repository, IMapper mapster, ISeatService seatService) : base(repository)
+        public SessionService(ISessionRepository repository, IMapper mapster) : base(repository)
         {
             _repository = repository;
             _mapster = mapster;
-            _seatService = seatService;
         }
     }
 }

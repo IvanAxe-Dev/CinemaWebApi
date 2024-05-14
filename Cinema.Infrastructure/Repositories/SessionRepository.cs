@@ -20,7 +20,8 @@ namespace Cinema.Infrastructure.Repositories
         {
             return base.PrepareDbSet()
                 .Include(x => x.Movie)
-                .Include(x=>x.CinemaHall);
+                .Include(x => x.CinemaHall)
+                .Include(x => x.Seats);
         }
     }
 }

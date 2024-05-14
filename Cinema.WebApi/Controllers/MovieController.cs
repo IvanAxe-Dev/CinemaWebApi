@@ -1,7 +1,7 @@
 using Cinema.Core.Domain.Entities;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
-using Cinema.Core.Services;
+using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,10 +21,11 @@ namespace Cinema.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<MovieResponse>>> GetAll()
+        public async Task<ActionResult<List<MovieResponse>>> GetAll([FromQuery]GetMoviesQuery moviesQuery)
         {
-            List<MovieResponse> movies = await _movieService.GetAllMoviesWithCategories();
+            //List<MovieResponse> movies = await _movieService.GetAllMoviesWithCategories();
 
+            var movies = await _movieService.GetFilteredMovies(moviesQuery);
             return Ok(movies);
         }
 
@@ -108,6 +109,14 @@ namespace Cinema.WebApi.Controllers
 
             await _movieService.DeleteAsync(movie);
             return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<MovieResponse>>> GetLatestMovies([FromQuery] int? moviesToTake)
+        {
+            List<MovieResponse> movies = await _movieService.TakeNLatestMovies(moviesToTake);
+
+            return Ok(movies);
         }
     }
 }
