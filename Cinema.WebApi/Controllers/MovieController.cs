@@ -78,11 +78,36 @@ namespace Cinema.WebApi.Controllers
         {
             Movie movie = _mapster.Map<Movie>(movieDto);
 
-            movie.Id = Guid.NewGuid();
-
             Movie newMovie = await _movieService.Insert(movie);
 
             return CreatedAtAction(nameof(GetById), new { id = newMovie.Id }, _mapster.Map<MovieResponse>(newMovie));
+        }
+        
+        [HttpPost("{id:guid}/upload-image")]
+        public async Task<ActionResult> UploadImageToMovie(Guid id, IFormFile file)
+        {
+            if (file != null && file.Length > 0)
+            {
+                if (file.Length > 200 * 1024)
+                {
+                    return BadRequest("File size must be less than 200KB");
+                }
+                
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(memoryStream);
+                    byte[] image = memoryStream.ToArray();
+                    var base64 = Convert.ToBase64String(image);
+                    
+                    await _movieService.UploadImageToMovie(id, base64);
+                }
+                
+                return Ok("Image uploaded successfully");
+            }
+            else
+            {
+                return BadRequest("No file selected");
+            }
         }
         
         [HttpPost("{id:guid}/rate")]

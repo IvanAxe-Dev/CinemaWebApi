@@ -14,5 +14,6 @@ namespace Cinema.Core.ServiceContracts
         Task RateMovie(Guid movieId, int rating);
 
         Task<List<MovieResponse>> GetRecommendedMovies(ApplicationUser user);
+        Task UploadImageToMovie(Guid id, string image);
     }
 }

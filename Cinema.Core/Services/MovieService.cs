@@ -153,5 +153,17 @@ namespace Cinema.Core.Services
 
             return movies;
         }
+        
+        public async Task UploadImageToMovie(Guid id, string imageUrl)
+        {
+            Movie? movie = await FindByIdAsync(id);
+
+            if (movie != null)
+            {
+                movie.ImageUrl = imageUrl;
+
+                await Update(movie);
+            }
+        }
     }
 }
