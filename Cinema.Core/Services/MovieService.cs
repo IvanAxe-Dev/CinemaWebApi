@@ -1,8 +1,10 @@
 ﻿using Cinema.Core.Domain.Entities;
+using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.Domain.RepositoryContracts;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using MapsterMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cinema.Core.Services
@@ -13,14 +15,16 @@ namespace Cinema.Core.Services
         private readonly IMovieRepository _movieRepository;
         private readonly IMovieCategoryRepository _movieCategoryRepository;
         private readonly ITicketRepository _ticketRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public MovieService(IMovieRepository repository, IMapper mapster, IMovieCategoryRepository movieCategoryRepository,
-            ITicketRepository ticketRepository) : base(repository)
+            ITicketRepository ticketRepository, UserManager<ApplicationUser> userManager) : base(repository)
         {
             _mapster = mapster;
             _movieRepository = repository;
             _movieCategoryRepository = movieCategoryRepository;
             _ticketRepository = ticketRepository;
+            _userManager = userManager;
         }
 
         public async Task<MovieResponse?> GetMovieWithCategoriesById(Guid movieId)
@@ -81,34 +85,16 @@ namespace Cinema.Core.Services
                 await Update(movie);
             }
         }
-
-        // Или же можно сделать что бы возвращалось просто айдишники фильмов, а потом запрос на них
-        public async Task<List<MovieResponse>> GetRecommendedMovies(Guid userId)
+        
+        public async Task<List<MovieResponse>> GetRecommendedMovies(ApplicationUser user)
         {
-            var userTickets = await _ticketRepository.GetWhere(t => t.ApplicationUserId == userId).Include(t => t.Session.Movie).ToListAsync();
+            var recentCategories = user.RecentlyWatchedCategories.TakeLast(5).ToList();
 
-            var userSessions = userTickets.Select(t => t.Session).ToList();
+            var recommendedMovies = await _movieCategoryRepository.GetWhere(mc => recentCategories.Contains(mc.Category.Name))
+                .Select(mc => mc.Movie)
+                .ToListAsync();
 
-            var watchedMovies = userSessions.Select(s => s.Movie).ToList();
-
-            var watchedMoviesCategories = await _movieCategoryRepository.GetWhere(mc => watchedMovies.Select(m => m.Id).Contains(mc.MovieId)).ToListAsync();
-
-            var watchedCategories = watchedMoviesCategories.Select(mc => mc.Category).ToList();
-
-            var mostFrequentCategories = watchedCategories
-                .GroupBy(c => c)
-                .OrderByDescending(g => g.Count())
-                .Select(g => g.Key)
-                .Take(3)
-                .ToList();
-
-            var recommendedMoviesCategories = await _movieCategoryRepository.GetWhere(mc => mostFrequentCategories.Contains(mc.Category)).ToListAsync();
-
-            var recommendedMovies = recommendedMoviesCategories.Select(mc => mc.Movie).Distinct().ToList();
-
-            var recommendedMoviesResponses = recommendedMovies.Select(m => _mapster.Map<MovieResponse>(m)).ToList();
-
-            return recommendedMoviesResponses ?? [];
+            return _mapster.Map<List<MovieResponse>>(recommendedMovies);
         }
 
         public async Task<List<MovieResponse>> TakeNLatestMovies(int? moviesToTake)

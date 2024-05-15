@@ -1,4 +1,5 @@
 ﻿using Cinema.Core.Domain.Entities;
+using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.DTO;
 
 namespace Cinema.Core.ServiceContracts
@@ -12,6 +13,6 @@ namespace Cinema.Core.ServiceContracts
         
         Task RateMovie(Guid movieId, int rating);
 
-        Task<List<MovieResponse>> GetRecommendedMovies(Guid userId);
+        Task<List<MovieResponse>> GetRecommendedMovies(ApplicationUser user);
     }
 }

@@ -1,8 +1,10 @@
 using Cinema.Core.Domain.Entities;
+using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using Mapster;
 using MapsterMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
@@ -13,11 +15,14 @@ namespace Cinema.WebApi.Controllers
     {
         private readonly IMovieService _movieService;
         private readonly IMapper _mapster;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public MovieController(IMovieService movieService, IMapper mapster)
+        public MovieController(IMovieService movieService, IMapper mapster,
+            UserManager<ApplicationUser> userManager)
         {
             _movieService = movieService;
             _mapster = mapster;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -37,6 +42,32 @@ namespace Cinema.WebApi.Controllers
             if (movie == null)
             {
                 return NotFound("Movie not found");
+            }
+            
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                ApplicationUser? user = await _userManager.GetUserAsync(User);
+
+                if (user != null)
+                {
+                    List<Category> categories = movie.Categories.Select(c => _mapster.Map<Category>(c)).ToList();
+
+                    List<string> categoriesNames = categories.Select(c => c.Name).ToList();
+            
+                    if (user.RecentlyWatchedCategories == null)
+                    {
+                        user.RecentlyWatchedCategories = new List<string>();
+                    }
+
+                    user.RecentlyWatchedCategories.AddRange(categoriesNames);
+            
+                    if (user.RecentlyWatchedCategories.Count > 10)
+                    {
+                        user.RecentlyWatchedCategories.RemoveRange(0, user.RecentlyWatchedCategories.Count - 10);
+                    }
+            
+                    await _userManager.UpdateAsync(user);
+                }
             }
 
             return Ok(movie);
@@ -77,7 +108,14 @@ namespace Cinema.WebApi.Controllers
         [HttpGet("{userId:guid}/recommended")]
         public async Task<ActionResult<List<MovieResponse>>> GetRecommendedMovies(Guid userId)
         {
-            List<MovieResponse> movies = await _movieService.GetRecommendedMovies(userId);
+            ApplicationUser? user = await _userManager.FindByIdAsync(userId.ToString());
+            
+            if (user == null)
+            {
+                return Unauthorized("User not found");
+            }
+            
+            List<MovieResponse> movies = await _movieService.GetRecommendedMovies(user);
 
             return Ok(movies);
         }
