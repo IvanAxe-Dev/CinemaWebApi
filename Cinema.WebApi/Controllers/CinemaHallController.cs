@@ -53,14 +53,6 @@ namespace Cinema.WebApi.Controllers
         {
             CinemaHall newCinemaHall = await _cinemaHallService.Insert(_mapster.Map<CinemaHall>(cinemaHallDto));
 
-            for (int i = 1; i <= newCinemaHall.RowsCount; i++)
-            {
-                for (int j = 1; j <= newCinemaHall.NumbersCount; j++)
-                {
-                    await _seatService.Insert(new Seat { Row = i, Number = j, CinemaHallId = newCinemaHall.Id });
-                }
-            }
-
             return CreatedAtAction(nameof(GetById), new { id = newCinemaHall.Id }, _mapster.Map<CinemaHallResponse>(newCinemaHall));
         }
 
