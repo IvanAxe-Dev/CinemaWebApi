@@ -23,8 +23,8 @@ const movies = [
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "date": "string",
         "startTime": "10:00",
-        "price": 0,
-        "availableSeats": 0,
+        "price": 100,
+        "availableSeats": 1,
         "movieId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "cinemaHallId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
       },
@@ -32,7 +32,7 @@ const movies = [
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "date": "string",
         "startTime": "12:00",
-        "price": 0,
+        "price": 140,
         "availableSeats": 1,
         "movieId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "cinemaHallId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
@@ -41,7 +41,7 @@ const movies = [
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "date": "string",
         "startTime": "14:30",
-        "price": 0,
+        "price": 160,
         "availableSeats": 1,
         "movieId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "cinemaHallId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
@@ -50,7 +50,7 @@ const movies = [
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "date": "string",
         "startTime": "16:45",
-        "price": 0,
+        "price": 100,
         "availableSeats": 1,
         "movieId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "cinemaHallId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
@@ -59,7 +59,7 @@ const movies = [
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "date": "string",
         "startTime": "19:00",
-        "price": 0,
+        "price": 80,
         "availableSeats": 1,
         "movieId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "cinemaHallId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"

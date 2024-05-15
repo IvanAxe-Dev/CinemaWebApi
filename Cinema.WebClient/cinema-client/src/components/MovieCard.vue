@@ -27,7 +27,10 @@ const availableSessions = computed(() => {
     <h3 class="movie-title">{{ props.movie.title }}</h3>
     <div class="sessions-info">
       <div class="session-item" v-for="session in availableSessions" :key="session.startTime">
-        {{ session.startTime }}
+        <div class="session-content">
+          {{ session.startTime }}
+          <div class="price-card">{{ session.price }}$</div>
+        </div>
       </div>
     </div>
   </div>
@@ -69,5 +72,31 @@ const availableSessions = computed(() => {
   padding: 5px;
   border-radius: 5px;
   text-align: center;
+}
+
+.session-content {
+  position: relative;
+}
+
+.session-item:hover {
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.price-card {
+  position: absolute;
+  top: 25px;
+  left: 10px;
+  transform: translateX(-50%);
+  padding: 5px;
+  background-color: #a0abc4;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 12px;
+  visibility: hidden;
+}
+
+.session-item:hover .price-card {
+  visibility: visible;
 }
 </style>
