@@ -8,7 +8,7 @@ const movies = [
     rentalStartDate: "2024-05-15T07:09:52.280Z",
     rentalEndDate: "2024-05-15T07:09:52.280Z",
     description: "string",
-    imageUrl: "https://via.placeholder.com/150",
+    imageUrl: "https://www.movieposters.com/cdn/shop/files/darkknight.building.24x36_20e90057-f673-4cc3-9ce7-7b0d3eeb7d83_480x.progressive.jpg?v=1707491191",
     releaseDate: "2024-05-15T07:09:52.280Z",
     director: "string",
     duration: "string",

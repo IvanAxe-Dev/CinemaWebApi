@@ -8,7 +8,7 @@ const props = defineProps({
   }
 });
 
-const placeholderPoster = "https://via.placeholder.com/300";
+const placeholderPoster = "https://via.placeholder.com/810x1200";
 const imageUrlRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
 
 const imageUrl = computed(() => {
@@ -23,7 +23,9 @@ const availableSessions = computed(() => {
 
 <template>
   <div class="movie-item">
-    <img :src="imageUrl" alt="Movie Poster" class="movie-poster">
+    <div class="poster-wrapper">
+      <img :src="imageUrl" alt="Movie Poster" class="movie-poster">
+    </div>
     <h3 class="movie-title">{{ props.movie.title }}</h3>
     <div class="sessions-info">
       <div class="session-item" v-for="session in availableSessions" :key="session.startTime">
@@ -43,9 +45,21 @@ const availableSessions = computed(() => {
   border-radius: 10px;
 }
 
+.poster-wrapper {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out;
+  transition: all 0.5s ease;
+}
+
 .movie-poster {
   width: 100%;
   border-radius: 10px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.movie-poster:hover {
+  transform: scale(1.1);
 }
 
 .movie-title {
