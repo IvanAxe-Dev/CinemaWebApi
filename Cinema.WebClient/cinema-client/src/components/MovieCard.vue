@@ -19,12 +19,84 @@ const imageUrl = computed(() => {
 const availableSessions = computed(() => {
   return props.movie.sessions.filter(session => session.availableSeats > 0);
 });
+
+const ratingMean = computed(() => {
+  if (!props.movie.ratings) return 0;
+
+  const ratingArray = props.movie.ratings;
+
+  if (!ratingArray.length > 0) return 0;
+
+  const sum = ratingArray.reduce((total, current) => total + current, 0);
+  return (sum / ratingArray.length);
+});
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const day = date.getDay();
+  const month = date.toLocaleString('default', { month: 'long'});
+  return `${day} ${month}`;
+}
+
+const rentalTerm = computed(() => {
+  const startDate = props.movie.rentalStartDate;
+  const endDate = props.movie.rentalEndDate;
+
+  if (startDate === endDate) {
+    return formatDate(startDate);
+  }
+
+  return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+});
+
 </script>
 
 <template>
   <div class="movie-item">
     <div class="poster-wrapper">
       <img :src="imageUrl" alt="Movie Poster" class="movie-poster">
+      <div class="movie-info-card">
+        <div class="info-card-content">
+          <div class="info-card-row">
+            <div class="rating">
+              Rating: {{ ratingMean }}/10
+            </div>
+            <div class="age-restriction">
+              {{ props.movie.ageRestriction }}+
+            </div>
+          </div>
+          <div class="info-card-row">
+            <div class="row-heading">
+              Genre:
+            </div>
+          </div>
+          <div class="genre-grid">
+            <div class="genre" v-for="category in props.movie.categories" :key="category.id">
+              {{ category.name }}
+            </div>
+          </div>
+          <div class="info-card-row">
+            <div class="row-heading">
+              Director: 
+            </div>
+          </div>
+          <div class="info-card-row">
+            <div class="director">
+              {{ props.movie.director }}
+            </div>
+          </div>
+          <div class="info-card-row">
+            <div class="row-heading">
+              Rental term: 
+            </div>
+          </div>
+          <div class="info-card-row">
+            <div class="rental-date">
+              {{ rentalTerm }}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <h3 class="movie-title">{{ props.movie.title }}</h3>
     <div class="sessions-info">
@@ -45,8 +117,75 @@ const availableSessions = computed(() => {
   border-radius: 10px;
 }
 
-.poster-wrapper {
+.session-content, .poster-wrapper {
   position: relative;
+}
+
+.movie-info-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(176, 176, 176, 0.2);
+  color: black;
+  font-size: large;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.poster-wrapper:hover .movie-info-card {
+  opacity: 1;
+}
+
+.info-card-content {
+  width: 80%;
+  height: 90%;
+}
+
+.info-card-row {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+
+  div {
+    padding: 5px;
+    border-radius: 10px;
+    background-color: rgba(176, 176, 176, 1);
+  }
+
+  .age-restriction {
+    margin-left: auto;
+  }
+
+  .row-heading {
+    font-size: medium;
+    color:rgb(37, 37, 37);
+  }
+}
+
+.genre-grid {
+  width: 100%;
+  margin-top: 5px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 0.5fr));
+  gap: 5px;
+
+  div {
+    padding: 5px;
+    border-radius: 10px;
+    background-color: rgba(176, 176, 176, 1);
+    overflow:hidden;
+  }
+}
+
+.poster-wrapper {
   overflow: hidden;
   transition: transform 0.3s ease-in-out;
   transition: all 0.5s ease;
@@ -58,21 +197,13 @@ const availableSessions = computed(() => {
   transition: transform 0.3s ease-in-out;
 }
 
-.movie-poster:hover {
+.poster-wrapper:hover .movie-poster {
   transform: scale(1.1);
 }
 
 .movie-title {
   font-size: 18px;
   margin: 10px 0;
-}
-
-.movie-description {
-  font-size: 14px;
-}
-
-.additional-info {
-  padding: 10px 0;
 }
 
 .sessions-info {
@@ -86,10 +217,7 @@ const availableSessions = computed(() => {
   padding: 5px;
   border-radius: 5px;
   text-align: center;
-}
-
-.session-content {
-  position: relative;
+  transition: all 0.2s ease-in-out;
 }
 
 .session-item:hover {

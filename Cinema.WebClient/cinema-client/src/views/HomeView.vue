@@ -6,17 +6,21 @@ const movies = [
     id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     title: "string",
     rentalStartDate: "2024-05-15T07:09:52.280Z",
-    rentalEndDate: "2024-05-15T07:09:52.280Z",
+    rentalEndDate: "2024-05-25T07:09:52.280Z",
     description: "string",
     imageUrl: "https://www.movieposters.com/cdn/shop/files/darkknight.building.24x36_20e90057-f673-4cc3-9ce7-7b0d3eeb7d83_480x.progressive.jpg?v=1707491191",
     releaseDate: "2024-05-15T07:09:52.280Z",
-    director: "string",
+    director: "Christopher Nolan",
     duration: "string",
     ageRestriction: 0,
     trailerUrl: "string",
     actors: "string",
     ratings: [
-      0
+      6,
+      7,
+      10,
+      9,
+      8
     ],
     sessions: [
       {
@@ -68,8 +72,20 @@ const movies = [
     categories: [
       {
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "name": "string"
-      }
+        "name": "action"
+      },
+      {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "name": "drama"
+      },
+      {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "name": "fiction"
+      },
+      {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "name": "action"
+      },
     ]
   },
   {
