@@ -11,5 +11,7 @@ namespace Cinema.Core.Domain.IdentityEntities
         public DateTime RefreshTokenExpiration { get; set; }
         public UserRoleOptions Role { get; set; }
         public List<Ticket> UserTickets { get; set; }
+        
+        public List<string>? RecentlyWatchedCategories { get; set; }
     }
 }

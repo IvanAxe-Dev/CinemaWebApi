@@ -1,8 +1,10 @@
 ﻿using Cinema.Core.Domain.Entities;
+using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.Domain.RepositoryContracts;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using MapsterMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cinema.Core.Services
@@ -12,12 +14,17 @@ namespace Cinema.Core.Services
         private readonly IMapper _mapster;
         private readonly IMovieRepository _movieRepository;
         private readonly IMovieCategoryRepository _movieCategoryRepository;
+        private readonly ITicketRepository _ticketRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public MovieService(IMovieRepository repository, IMapper mapster, IMovieCategoryRepository movieCategoryRepository) : base(repository)
+        public MovieService(IMovieRepository repository, IMapper mapster, IMovieCategoryRepository movieCategoryRepository,
+            ITicketRepository ticketRepository, UserManager<ApplicationUser> userManager) : base(repository)
         {
             _mapster = mapster;
             _movieRepository = repository;
             _movieCategoryRepository = movieCategoryRepository;
+            _ticketRepository = ticketRepository;
+            _userManager = userManager;
         }
 
         public async Task<MovieResponse?> GetMovieWithCategoriesById(Guid movieId)
@@ -60,6 +67,34 @@ namespace Cinema.Core.Services
             }
 
             return moviesResponses;
+        }
+        
+        public async Task RateMovie(Guid movieId, int rating)
+        {
+            Movie? movie = await FindByIdAsync(movieId);
+
+            if (movie.Ratings == null)
+            {
+                movie.Ratings = new List<int>();
+            }
+            
+            if (movie != null)
+            {
+                movie.Ratings.Add(rating);
+
+                await Update(movie);
+            }
+        }
+        
+        public async Task<List<MovieResponse>> GetRecommendedMovies(ApplicationUser user)
+        {
+            var recentCategories = user.RecentlyWatchedCategories.TakeLast(5).ToList();
+
+            var recommendedMovies = await _movieCategoryRepository.GetWhere(mc => recentCategories.Contains(mc.Category.Name))
+                .Select(mc => mc.Movie)
+                .ToListAsync();
+
+            return _mapster.Map<List<MovieResponse>>(recommendedMovies);
         }
 
         public async Task<List<MovieResponse>> TakeNLatestMovies(int? moviesToTake)
@@ -117,6 +152,18 @@ namespace Cinema.Core.Services
             }
 
             return movies;
+        }
+        
+        public async Task UploadImageToMovie(Guid id, string imageUrl)
+        {
+            Movie? movie = await FindByIdAsync(id);
+
+            if (movie != null)
+            {
+                movie.ImageUrl = imageUrl;
+
+                await Update(movie);
+            }
         }
     }
 }
