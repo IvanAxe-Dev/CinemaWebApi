@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
 {
-    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class SessionController : BaseController
@@ -22,7 +21,8 @@ namespace Cinema.WebApi.Controllers
             _mapster = mapster;
             _cinemaHallService = cinemaHallService;
         }
-        
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<SessionResponse>>> GetAll()
         {
@@ -30,7 +30,8 @@ namespace Cinema.WebApi.Controllers
 
             return Ok(_mapster.Map<List<SessionResponse>>(sessions));
         }
-        
+
+        [AllowAnonymous]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<SessionResponse>> GetById(Guid id)
         {
@@ -46,7 +47,7 @@ namespace Cinema.WebApi.Controllers
             return Ok(sessionResponse);
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<SessionResponse>> Create(SessionDto sessionDto)
         {

@@ -2,6 +2,7 @@ using Cinema.Core.Domain.Entities;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
@@ -18,7 +19,8 @@ namespace Cinema.WebApi.Controllers
             _seatService = seatService;
             _mapster = mapster;
         }
-        
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<Seat>>> GetAll()
         {
@@ -26,7 +28,8 @@ namespace Cinema.WebApi.Controllers
 
             return Ok(seats);
         }
-        
+
+        [AllowAnonymous]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<Seat>> GetById(Guid id)
         {
@@ -39,7 +42,8 @@ namespace Cinema.WebApi.Controllers
 
             return Ok(seat);
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Seat>> Create(SeatDto seatDto)
         {
@@ -48,6 +52,7 @@ namespace Cinema.WebApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = newSeat.Id }, newSeat);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("{sessionId:guid}")]
         public async Task<ActionResult<List<SeatResponse>>> CreateRange(Guid sessionId)
         {
@@ -56,6 +61,7 @@ namespace Cinema.WebApi.Controllers
             return Ok(seats);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<Seat>> Update(Guid id, SeatDto seatDto)
         {
@@ -70,7 +76,8 @@ namespace Cinema.WebApi.Controllers
 
             return Ok(await _seatService.Update(seat));
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {

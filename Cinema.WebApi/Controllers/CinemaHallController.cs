@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore.Update.Internal;
 
 namespace Cinema.WebApi.Controllers
 {
-    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class CinemaHallController : BaseController
@@ -23,7 +22,8 @@ namespace Cinema.WebApi.Controllers
             _mapster = mapster;
             _seatService = seatService;
         }
-        
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<CinemaHallResponse>>> GetAll()
         {
@@ -31,7 +31,8 @@ namespace Cinema.WebApi.Controllers
 
             return Ok(_mapster.Map<List<CinemaHallResponse>>(cinemaHalls));
         }
-        
+
+        [AllowAnonymous]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<CinemaHallResponse>> GetById(Guid id)
         {

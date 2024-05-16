@@ -27,7 +27,9 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
 
     public virtual DbSet<Session> Sessions { get; set; }
 
-    public virtual DbSet<Seat> Seats { get; set; }  
+    public virtual DbSet<Seat> Seats { get; set; }
+
+    public virtual DbSet<UserMovieRate> UserMovieRate { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,13 +38,13 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(c => c.Id);
             entity.Property(e => e.Name).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Movie>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasKey(m => m.Id);
             entity.Property(e => e.Director).HasMaxLength(50);
             entity.Property(e => e.ReleaseDate).HasColumnType("datetime");
             entity.Property(e => e.Title).HasMaxLength(50);
@@ -61,6 +63,16 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
                 .HasForeignKey(d => d.MovieId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_MovieCategories_Movies");
+        });
+
+        modelBuilder.Entity<UserMovieRate>(entity =>
+        {
+            entity.HasKey(um => um.Id);
+
+            entity.HasOne(d => d.Movie).WithMany()
+                .HasForeignKey(d => d.MovieId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserMovieRate_Movies");
         });
 
         modelBuilder.Entity<CinemaHall>(entity =>

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "ApplicationUser")]
     public class UserController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;

@@ -29,7 +29,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         //add user identification as in [movie]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "ApplicationUser")]
         [HttpGet("[action]")]
         public async Task<ActionResult<List<Ticket>>> GetAllForUser()
         {
@@ -53,7 +53,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         //add user identification check as in [movie]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "ApplicationUser")]
         [HttpGet("[action]/{id:guid}")]
         public async Task<ActionResult<Ticket>> GetByIdForUser(Guid id)
         {

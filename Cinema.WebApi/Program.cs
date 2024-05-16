@@ -69,7 +69,7 @@ builder.Services.AddScoped<ISeatService, SeatService>();
 builder.Services.AddScoped<ISessionService, SessionService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IMovieCategoryService, MovieCategoryService>();
-
+builder.Services.AddScoped<IUserMovieRateService, UserMovieRateService>();
 
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -78,6 +78,7 @@ builder.Services.AddScoped<ISeatRepository, SeatRepository>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<IMovieCategoryRepository, MovieCategoryRepository>();
+builder.Services.AddScoped<IUserMovieRateRepository, UserMovieRateRepository>();
 
 builder.Services.AddMapster();
 MapsterConfig.Configure();

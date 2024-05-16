@@ -4,6 +4,7 @@ using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using Mapster;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,8 +26,9 @@ namespace Cinema.WebApi.Controllers
             _userManager = userManager;
         }
 
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<List<MovieResponse>>> GetAll([FromQuery]GetMoviesQuery moviesQuery)
+        public async Task<ActionResult<List<MovieResponse>>> GetAll([FromQuery] GetMoviesQuery moviesQuery)
         {
             //List<MovieResponse> movies = await _movieService.GetAllMoviesWithCategories();
 
@@ -34,45 +36,28 @@ namespace Cinema.WebApi.Controllers
             return Ok(movies);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<MovieResponse>> GetById(Guid id)
         {
-            MovieResponse? movie = await _movieService.GetMovieWithCategoriesById(id);
-
+            MovieResponse? movie = User.Identity.IsAuthenticated
+                ? await _movieService.GetMovieWithCategoriesById(id, User)
+                : await _movieService.GetMovieWithCategoriesById(id, null);
+            
             if (movie == null)
             {
                 return NotFound("Movie not found");
             }
-            
-            if (User?.Identity?.IsAuthenticated == true)
+
+            if (User.Identity?.IsAuthenticated == true)
             {
-                ApplicationUser? user = await _userManager.GetUserAsync(User);
-
-                if (user != null)
-                {
-                    List<Category> categories = movie.Categories.Select(c => _mapster.Map<Category>(c)).ToList();
-
-                    List<string> categoriesNames = categories.Select(c => c.Name).ToList();
-            
-                    if (user.RecentlyWatchedCategories == null)
-                    {
-                        user.RecentlyWatchedCategories = new List<string>();
-                    }
-
-                    user.RecentlyWatchedCategories.AddRange(categoriesNames);
-            
-                    if (user.RecentlyWatchedCategories.Count > 10)
-                    {
-                        user.RecentlyWatchedCategories.RemoveRange(0, user.RecentlyWatchedCategories.Count - 10);
-                    }
-            
-                    await _userManager.UpdateAsync(user);
-                }
+                await _movieService.UpdateRecentlyWatchedCategoriesAsync(User, movie.Categories);
             }
 
             return Ok(movie);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<MovieResponse>> Create(MovieDto movieDto)
         {
@@ -82,7 +67,8 @@ namespace Cinema.WebApi.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = newMovie.Id }, _mapster.Map<MovieResponse>(newMovie));
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("{id:guid}/upload-image")]
         public async Task<ActionResult> UploadImageToMovie(Guid id, IFormFile file)
         {
@@ -92,16 +78,16 @@ namespace Cinema.WebApi.Controllers
                 {
                     return BadRequest("File size must be less than 200KB");
                 }
-                
+
                 using (var memoryStream = new MemoryStream())
                 {
                     await file.CopyToAsync(memoryStream);
                     byte[] image = memoryStream.ToArray();
                     var base64 = Convert.ToBase64String(image);
-                    
+
                     await _movieService.UploadImageToMovie(id, base64);
                 }
-                
+
                 return Ok("Image uploaded successfully");
             }
             else
@@ -109,7 +95,8 @@ namespace Cinema.WebApi.Controllers
                 return BadRequest("No file selected");
             }
         }
-        
+
+        [Authorize(Roles = "ApplicationUser")]
         [HttpPost("{id:guid}/rate")]
         public async Task<ActionResult<MovieResponse>> Rate(Guid id, [FromBody] int rating)
         {
@@ -117,34 +104,31 @@ namespace Cinema.WebApi.Controllers
             {
                 return BadRequest("Rating must be between 1 and 5");
             }
-            
+
             Movie? movie = await _movieService.FindByIdAsync(id);
-            
+
             if (movie == null)
             {
                 return NotFound("Movie not found");
             }
-            
-            await _movieService.RateMovie(id, rating);
-            
+
+            await _movieService.RateMovie(id, User, rating);
+
             return Ok("Movie rated successfully");
         }
-        
+
+        [Authorize(Roles = "ApplicationUser")]
         [HttpGet("{userId:guid}/recommended")]
-        public async Task<ActionResult<List<MovieResponse>>> GetRecommendedMovies(Guid userId)
+        public async Task<ActionResult<List<MovieResponse>>> GetRecommendedMovies()
         {
-            ApplicationUser? user = await _userManager.FindByIdAsync(userId.ToString());
-            
-            if (user == null)
-            {
-                return Unauthorized("User not found");
-            }
-            
-            List<MovieResponse> movies = await _movieService.GetRecommendedMovies(user);
+            ApplicationUser? user = await _userManager.GetUserAsync(User);
+
+            List<MovieResponse> movies = await _movieService.GetRecommendedMovies(user!);
 
             return Ok(movies);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<MovieResponse>> Update(Guid id, MovieDto movieDto)
         {
@@ -156,10 +140,11 @@ namespace Cinema.WebApi.Controllers
             }
 
             Movie movie = _mapster.Map(movieDto, existingMovie);
-            
+
             return Ok(_mapster.Map<MovieResponse>(await _movieService.Update(movie)));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {
@@ -174,6 +159,7 @@ namespace Cinema.WebApi.Controllers
             return NoContent();
         }
 
+        [AllowAnonymous]
         [HttpGet("[action]")]
         public async Task<ActionResult<List<MovieResponse>>> GetLatestMovies([FromQuery] int? moviesToTake)
         {

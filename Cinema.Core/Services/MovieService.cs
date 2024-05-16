@@ -6,6 +6,7 @@ using Cinema.Core.ServiceContracts;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Cinema.Core.Services
 {
@@ -15,36 +16,60 @@ namespace Cinema.Core.Services
         private readonly IMovieRepository _movieRepository;
         private readonly IMovieCategoryRepository _movieCategoryRepository;
         private readonly ITicketRepository _ticketRepository;
+        private readonly IUserMovieRateService _userMovieRateService;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public MovieService(IMovieRepository repository, IMapper mapster, IMovieCategoryRepository movieCategoryRepository,
-            ITicketRepository ticketRepository, UserManager<ApplicationUser> userManager) : base(repository)
+            ITicketRepository ticketRepository, UserManager<ApplicationUser> userManager, IUserMovieRateService userMovieRateService) : base(repository)
         {
             _mapster = mapster;
             _movieRepository = repository;
             _movieCategoryRepository = movieCategoryRepository;
             _ticketRepository = ticketRepository;
             _userManager = userManager;
+            _userMovieRateService = userMovieRateService;
         }
 
-        public async Task<MovieResponse?> GetMovieWithCategoriesById(Guid movieId)
+        public async Task<MovieResponse?> GetMovieWithCategoriesById(Guid movieId, ClaimsPrincipal? user)
         {
             Movie? movie = await FindByIdAsync(movieId);
 
             if (movie != null)
             {
-                var movieCategories = await _movieCategoryRepository.GetWhere(m=>m.MovieId == movieId).ToListAsync();
+                var movieCategories = await _movieCategoryRepository.GetWhere(m => m.MovieId == movieId).ToListAsync();
 
                 List<CategoryResponse> categories = movieCategories.Select(mc => _mapster.Map<CategoryResponse>(mc.Category)).ToList();
 
                 MovieResponse movieResponse = _mapster.Map<MovieResponse>(movie);
 
                 movieResponse.Categories = categories;
-
+                if (user != null)
+                {
+                    var appUser = await _userManager.GetUserAsync(user);
+                    movieResponse.UserRating = await _userMovieRateService.GetUserMovieRating(appUser!.Id);
+                }
                 return movieResponse;
             }
 
             return null;
+        }
+
+        public async Task UpdateRecentlyWatchedCategoriesAsync(ClaimsPrincipal user, IEnumerable<CategoryResponse> categories)
+        {
+            var appUser = await _userManager.GetUserAsync(user);
+
+            if (appUser == null) return;
+
+            appUser.RecentlyWatchedCategories ??= new List<string>();
+
+            appUser.RecentlyWatchedCategories.AddRange(categories.Select(c => _mapster.Map<Category>(c).Name));
+
+            if (appUser.RecentlyWatchedCategories.Count > 10)
+            {
+                appUser.RecentlyWatchedCategories.RemoveRange(0, appUser.RecentlyWatchedCategories.Count - 10);
+            }
+
+            await _userManager.UpdateAsync(appUser);
         }
 
         public async Task<List<MovieResponse>> GetAllMoviesWithCategories()
@@ -68,24 +93,29 @@ namespace Cinema.Core.Services
 
             return moviesResponses;
         }
-        
-        public async Task RateMovie(Guid movieId, int rating)
+
+        public async Task RateMovie(Guid movieId, ClaimsPrincipal user, int rating)
         {
             Movie? movie = await FindByIdAsync(movieId);
 
-            if (movie.Ratings == null)
-            {
-                movie.Ratings = new List<int>();
-            }
-            
-            if (movie != null)
-            {
-                movie.Ratings.Add(rating);
+            movie!.Ratings ??= new List<int>();
+            var appUser = await _userManager.GetUserAsync(user);
 
-                await Update(movie);
-            }
+
+            movie.Ratings.Add(rating);
+
+            UserMovieRate userMovieRate = new()
+            {
+                Movie = movie,
+                ApplicationUserId = appUser!.Id,
+                Rating = rating
+            };
+
+            await Update(movie);
+
+            await _userMovieRateService.Insert(userMovieRate);
         }
-        
+
         public async Task<List<MovieResponse>> GetRecommendedMovies(ApplicationUser user)
         {
             var recentCategories = user.RecentlyWatchedCategories.TakeLast(5).ToList();
@@ -153,7 +183,7 @@ namespace Cinema.Core.Services
 
             return movies;
         }
-        
+
         public async Task UploadImageToMovie(Guid id, string imageUrl)
         {
             Movie? movie = await FindByIdAsync(id);
