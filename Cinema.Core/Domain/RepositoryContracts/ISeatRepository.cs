@@ -1,9 +1,8 @@
-﻿using Cinema.Core.Domain.Entities;
+﻿//using Cinema.Core.Domain.Entities;
 
-namespace Cinema.Core.Domain.RepositoryContracts
-{
-    public interface ISeatRepository : IRepository<Seat>
-    {
-        Task PostRange(List<Seat> entity);
-    }
-}
+//namespace Cinema.Core.Domain.RepositoryContracts
+//{
+//    public interface ISeatRepository : IRepository<Seat>
+//    {
+//    }
+//}

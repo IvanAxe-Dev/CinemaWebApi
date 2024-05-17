@@ -11,5 +11,5 @@ public class SessionResponse
     public int AvailableSeats { get; set; }
     public Guid MovieId { get; set; }
     public Guid CinemaHallId { get; set; }
-    public List<SeatResponse> Seats { get; set; } = new List<SeatResponse>();
+    public List<TicketResponse> Tickets { get; set; } = new List<TicketResponse>();
 }

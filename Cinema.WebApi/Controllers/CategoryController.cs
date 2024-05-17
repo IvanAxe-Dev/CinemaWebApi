@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
 {
-    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : BaseController
@@ -22,6 +21,7 @@ namespace Cinema.WebApi.Controllers
             _mapster = mapster;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<Category>>> GetAll()
         {
@@ -30,6 +30,7 @@ namespace Cinema.WebApi.Controllers
             return Ok(categories);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<Category>> GetById(Guid id)
         {

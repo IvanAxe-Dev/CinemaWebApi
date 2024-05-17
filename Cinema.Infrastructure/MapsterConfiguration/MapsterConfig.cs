@@ -32,7 +32,7 @@ public static class MapsterConfig
         TypeAdapterConfig<Session, SessionResponse>.NewConfig()
             .Map(dest => dest.CinemaHallId, src => src.CinemaHallId)
 
-            .Map(dest => dest.AvailableSeats, src => src.AvailableSeats)
+            .Map(dest => dest.AvailableSeats, src => src.AvailableTickets)
 
             .Map(dest => dest.MovieId, src => src.MovieId)
 
@@ -42,8 +42,6 @@ public static class MapsterConfig
 
             .Map(dest => dest.Id, src => src.Id)
 
-            .Map(dest => dest.Price, src => src.Price)
-
-            .Map(dest => dest.Seats, src => src.Seats);
+            .Map(dest => dest.Price, src => src.Price);
     }
 }
