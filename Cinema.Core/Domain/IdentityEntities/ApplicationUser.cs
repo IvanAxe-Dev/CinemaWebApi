@@ -10,8 +10,8 @@ namespace Cinema.Core.Domain.IdentityEntities
         public string? RefreshToken { get; set; }
         public DateTime RefreshTokenExpiration { get; set; }
         public UserRoleOptions Role { get; set; }
-        public List<Ticket> UserTickets { get; set; }
-        
-        public List<string>? RecentlyWatchedCategories { get; set; }
+        public ICollection<Ticket> UserTickets { get; set; } = new List<Ticket>();
+
+        public ICollection<Category> RecentlyWatchedCategories { get; set; } = new List<Category>();
     }
 }

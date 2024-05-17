@@ -13,14 +13,12 @@ namespace Cinema.WebApi.Controllers
     public class CinemaHallController : BaseController
     {
         private readonly ICinemaHallService _cinemaHallService;
-        private readonly ISeatService _seatService;
         private readonly IMapper _mapster;
 
-        public CinemaHallController(ICinemaHallService cinemaHallService, IMapper mapster, ISeatService seatService)
+        public CinemaHallController(ICinemaHallService cinemaHallService, IMapper mapster)
         {
             _cinemaHallService = cinemaHallService;
             _mapster = mapster;
-            _seatService = seatService;
         }
 
         [AllowAnonymous]

@@ -27,9 +27,7 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
 
     public virtual DbSet<Session> Sessions { get; set; }
 
-    public virtual DbSet<Seat> Seats { get; set; }
-
-    public virtual DbSet<UserMovieRate> UserMovieRate { get; set; }
+    public virtual DbSet<UserMovieRate> UserMovieRates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -97,18 +95,6 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
                 .OnDelete(DeleteBehavior.NoAction);
         });
 
-        modelBuilder.Entity<Seat>(entity =>
-        {
-            entity.HasKey(e => e.Id); 
-
-            entity.Property(e => e.Row).IsRequired();
-            entity.Property(e => e.Number).IsRequired();
-
-            entity.HasOne(s => s.Session)
-                .WithMany(ch => ch.Seats)
-                .HasForeignKey(s => s.SessionId)
-                .OnDelete(DeleteBehavior.NoAction);
-        });
 
         OnModelCreatingPartial(modelBuilder);
     }

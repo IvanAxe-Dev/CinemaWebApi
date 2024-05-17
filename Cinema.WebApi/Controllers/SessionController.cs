@@ -54,7 +54,7 @@ namespace Cinema.WebApi.Controllers
             var sessionCinemaHall = await _cinemaHallService.FindByIdAsync(sessionDto.CinemaHallId);
 
             var newSession = _mapster.Map<Session>(sessionDto);
-            newSession.AvailableSeats = (int)(sessionCinemaHall.RowsCount * sessionCinemaHall.NumbersCount)!;
+            newSession.AvailableTickets = (int)(sessionCinemaHall.RowsCount * sessionCinemaHall.NumbersCount)!;
 
             await _sessionService.Insert(newSession);
 

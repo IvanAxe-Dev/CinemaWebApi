@@ -94,6 +94,15 @@ namespace Cinema.WebApi.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [HttpPost("{sessionId:guid}")]
+        public async Task<ActionResult<List<TicketResponse>>> CreateRange(Guid sessionId)
+        {
+            List<TicketResponse> tickets = await _ticketService.CreateTicketsForSession(sessionId);
+
+            return Ok(tickets);
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {

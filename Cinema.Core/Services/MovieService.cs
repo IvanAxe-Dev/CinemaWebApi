@@ -19,6 +19,8 @@ namespace Cinema.Core.Services
         private readonly IUserMovieRateService _userMovieRateService;
         private readonly UserManager<ApplicationUser> _userManager;
 
+        private const int RECENTLY_WATCHED_CATEGORIES_MAX = 5;
+
         public MovieService(IMovieRepository repository, IMapper mapster, IMovieCategoryRepository movieCategoryRepository,
             ITicketRepository ticketRepository, UserManager<ApplicationUser> userManager, IUserMovieRateService userMovieRateService) : base(repository)
         {
@@ -60,13 +62,17 @@ namespace Cinema.Core.Services
 
             if (appUser == null) return;
 
-            appUser.RecentlyWatchedCategories ??= new List<string>();
-
-            appUser.RecentlyWatchedCategories.AddRange(categories.Select(c => _mapster.Map<Category>(c).Name));
-
-            if (appUser.RecentlyWatchedCategories.Count > 10)
+            foreach (var category in categories)
             {
-                appUser.RecentlyWatchedCategories.RemoveRange(0, appUser.RecentlyWatchedCategories.Count - 10);
+                appUser.RecentlyWatchedCategories.Prepend(_mapster.Map<Category>(category));
+            }
+            
+            if (appUser.RecentlyWatchedCategories.Count > RECENTLY_WATCHED_CATEGORIES_MAX)
+            {
+                for (int i = RECENTLY_WATCHED_CATEGORIES_MAX; i < appUser.RecentlyWatchedCategories.Count; i++)
+                {
+                    appUser.RecentlyWatchedCategories.Remove(appUser.RecentlyWatchedCategories.ElementAt(i));
+                }
             }
 
             await _userManager.UpdateAsync(appUser);
@@ -118,9 +124,9 @@ namespace Cinema.Core.Services
 
         public async Task<List<MovieResponse>> GetRecommendedMovies(ApplicationUser user)
         {
-            var recentCategories = user.RecentlyWatchedCategories.TakeLast(5).ToList();
+            var recentCategories = user.RecentlyWatchedCategories.ToList();
 
-            var recommendedMovies = await _movieCategoryRepository.GetWhere(mc => recentCategories.Contains(mc.Category.Name))
+            var recommendedMovies = await _movieCategoryRepository.GetWhere(mc => recentCategories.Contains(mc.Category))
                 .Select(mc => mc.Movie)
                 .ToListAsync();
 

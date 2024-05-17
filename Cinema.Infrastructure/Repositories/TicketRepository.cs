@@ -14,8 +14,14 @@ namespace Cinema.Infrastructure.Repositories
         protected override IQueryable<Ticket> PrepareDbSet()
         {
             return base.PrepareDbSet()
-                .Include(x => x.Seat)
                 .Include(x => x.Session);
+        }
+        public async Task PostRange(List<Ticket> entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
+            await dbSet.AddRangeAsync(entity);
         }
     }
 }
