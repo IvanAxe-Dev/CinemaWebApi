@@ -2,13 +2,11 @@ namespace Cinema.Core.DTO;
 
 public class SessionDto
 {
-    public string Date { get; set; }
+    public DateTime Date { get; set; }
     
-    public string StartTime { get; set; }
+    public DateTime StartTime { get; set; }
     
     public decimal Price { get; set; }
-    
-    public int AvailableSeats { get; set; }
     
     public Guid MovieId { get; set; }
     

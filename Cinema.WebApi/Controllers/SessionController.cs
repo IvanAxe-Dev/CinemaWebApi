@@ -14,11 +14,13 @@ namespace Cinema.WebApi.Controllers
     {
         private readonly ISessionService _sessionService;
         private readonly IMapper _mapster;
+        private readonly ICinemaHallService _cinemaHallService;
 
-        public SessionController(ISessionService sessionService, IMapper mapster)
+        public SessionController(ISessionService sessionService, IMapper mapster, ICinemaHallService cinemaHallService)
         {
             _sessionService = sessionService;
             _mapster = mapster;
+            _cinemaHallService = cinemaHallService;
         }
         
         [HttpGet]
@@ -44,11 +46,17 @@ namespace Cinema.WebApi.Controllers
             return Ok(sessionResponse);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<SessionResponse>> Create(SessionDto sessionDto)
         {
-            Session newSession = await _sessionService.Insert(_mapster.Map<Session>(sessionDto));
+            var sessionCinemaHall = await _cinemaHallService.FindByIdAsync(sessionDto.CinemaHallId);
+
+            var newSession = _mapster.Map<Session>(sessionDto);
+            newSession.AvailableSeats = (int)(sessionCinemaHall.RowsCount * sessionCinemaHall.NumbersCount)!;
+
+            await _sessionService.Insert(newSession);
+
             return CreatedAtAction(nameof(GetById), new { id = newSession.Id }, _mapster.Map<SessionResponse>(newSession));
         }
 

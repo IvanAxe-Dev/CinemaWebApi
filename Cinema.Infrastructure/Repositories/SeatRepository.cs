@@ -19,7 +19,15 @@ namespace Cinema.Infrastructure.Repositories
         protected override IQueryable<Seat> PrepareDbSet()
         {
             return base.PrepareDbSet()
-                .Include(x => x.CinemaHall);
+                .Include(x => x.Session);
+        }
+
+        public async Task PostRange(List<Seat> entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
+            await dbSet.AddRangeAsync(entity);
         }
     }
 }
