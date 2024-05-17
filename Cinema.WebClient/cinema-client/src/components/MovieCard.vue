@@ -1,5 +1,6 @@
 <script setup>
 import { defineEmits, defineProps, computed } from 'vue';
+import { getDayMonth, getAverageRating } from '../utils.js';
 
 const props = defineProps({
   movie: {
@@ -27,32 +28,13 @@ const availableSessions = computed(() => {
 });
 
 const ratingMean = computed(() => {
-  if (!props.movie.ratings) return 0;
-
-  const ratingArray = props.movie.ratings;
-
-  if (!ratingArray.length > 0) return 0;
-
-  const sum = ratingArray.reduce((total, current) => total + current, 0);
-  return (sum / ratingArray.length);
+  return getAverageRating(props.movie.ratings);
 });
 
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  const day = date.getDay();
-  const month = date.toLocaleString('default', { month: 'long'});
-  return `${day} ${month}`;
-}
-
 const rentalTerm = computed(() => {
-  const startDate = props.movie.rentalStartDate;
-  const endDate = props.movie.rentalEndDate;
-
-  if (startDate === endDate) {
-    return formatDate(startDate);
-  }
-
-  return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+  const startDate = getDayMonth(props.movie.rentalStartDate);
+  const endDate = getDayMonth(props.movie.rentalEndDate);
+  return startDate === endDate ? startDate : `${startDate} - ${endDate}`;
 });
 
 </script>
