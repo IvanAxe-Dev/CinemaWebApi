@@ -1,10 +1,17 @@
 <script setup>
+import { useRouter } from 'vue-router';
 import MovieCard from '../components/MovieCard.vue';
+
+const router = useRouter();
+
+function goToDetails(movieId) {
+  router.push({ name: 'movie-details', params: { id: movieId}} )
+}
 
 const movies = [
   {
     id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    title: "string",
+    title: "The Dark Knight",
     rentalStartDate: "2024-05-15T07:09:52.280Z",
     rentalEndDate: "2024-05-25T07:09:52.280Z",
     description: "string",
@@ -12,7 +19,7 @@ const movies = [
     releaseDate: "2024-05-15T07:09:52.280Z",
     director: "Christopher Nolan",
     duration: "string",
-    ageRestriction: 0,
+    ageRestriction: 12,
     trailerUrl: "string",
     actors: "string",
     ratings: [
@@ -265,7 +272,7 @@ const movies = [
   <div class="home">
     <h1>Movies</h1>
     <div class="movie-grid">
-      <movie-card v-for="movie in movies" :key="movie.id" :movie="movie" />
+      <movie-card v-for="movie in movies" :key="movie.id" :movie="movie" @navigateToDetails="goToDetails" />
     </div>
   </div>
 </template>

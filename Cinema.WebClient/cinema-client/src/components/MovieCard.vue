@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, computed } from 'vue';
+import { defineEmits, defineProps, computed } from 'vue';
 
 const props = defineProps({
   movie: {
@@ -7,6 +7,12 @@ const props = defineProps({
     required: true
   }
 });
+
+const emit = defineEmits(['navigateToDetail']);
+
+function navigateToDetails() {
+  emit('navigateToDetails', props.movie.id);
+}
 
 const placeholderPoster = "https://via.placeholder.com/810x1200";
 const imageUrlRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
@@ -53,7 +59,7 @@ const rentalTerm = computed(() => {
 
 <template>
   <div class="movie-item">
-    <div class="poster-wrapper">
+    <div class="poster-wrapper" @click="navigateToDetails">
       <img :src="imageUrl" alt="Movie Poster" class="movie-poster">
       <div class="movie-info-card">
         <div class="info-card-content">
