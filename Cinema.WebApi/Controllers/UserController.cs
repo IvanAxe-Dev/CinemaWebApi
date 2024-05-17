@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
 {
-    [Authorize(Roles = "ApplicationUser")]
+    [Authorize(Roles = "User")]
     public class UserController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -36,6 +36,29 @@ namespace Cinema.WebApi.Controllers
             List<TicketResponse> ticketResponses = _mapster.Map<List<TicketResponse>>(userTickets);
 
             return ticketResponses;
+        }
+
+        [HttpPost("[action]/{ticketId:guid}")]
+        public async Task<ActionResult<TicketResponse>> PostUserTicket([FromRoute]Guid ticketId)
+        {
+            if (User.Identity==null)
+            {
+                return BadRequest("user is not found");
+            }
+            ApplicationUser? user = await _userManager.FindByNameAsync(User.Identity.Name);
+            Ticket? userTicket = await _ticketRepository.GetFirstOrDefaultAsync(ticket => ticket.Id == ticketId);
+            if (userTicket==null)
+            {
+                return NotFound("User ticket not found");
+            }
+
+            userTicket.IsBooked = true;
+            userTicket.BookedAt = DateTime.Now;
+            
+            
+            
+            await _ticketRepository.SaveChangesAsync();
+            return _mapster.Map<TicketResponse>(userTicket);
         }
     }
 }

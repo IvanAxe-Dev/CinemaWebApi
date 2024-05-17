@@ -22,7 +22,7 @@ namespace Cinema.Core.DTO
         [Compare(nameof(Password), ErrorMessage = "Password and Repeat Password do not match")]
         public string RepeatPassword { get; set; } = string.Empty;
 
+        // TODO: Ensure validation pipeline for role. Parse as a string (not int) or redo authorization attribute
         public UserRoleOptions Role { get; set; }
-
     }
 }

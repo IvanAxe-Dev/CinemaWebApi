@@ -29,7 +29,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         //add user identification as in [movie]
-        [Authorize(Roles = "ApplicationUser")]
+        [Authorize(Roles = "User")]
         [HttpGet("[action]")]
         public async Task<ActionResult<List<Ticket>>> GetAllForUser()
         {
@@ -53,7 +53,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         //add user identification check as in [movie]
-        [Authorize(Roles = "ApplicationUser")]
+        [Authorize(Roles = "User")]
         [HttpGet("[action]/{id:guid}")]
         public async Task<ActionResult<Ticket>> GetByIdForUser(Guid id)
         {
@@ -69,8 +69,10 @@ namespace Cinema.WebApi.Controllers
 
         //add user identification
         [HttpPost]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult<Ticket>> Create(TicketDto ticketDto)
         {
+            
             Ticket newTicket = await _ticketService.Insert(_mapster.Map<Ticket>(ticketDto));
 
             return CreatedAtAction(nameof(GetByIdForUser), new { id = newTicket.Id }, newTicket);
