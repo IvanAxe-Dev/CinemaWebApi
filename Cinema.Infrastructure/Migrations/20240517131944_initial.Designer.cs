@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cinema.Infrastructure.Migrations
 {
     [DbContext(typeof(SqlcinemadbContext))]
-    [Migration("20240508132016_MovieCategory_table_id")]
-    partial class MovieCategory_table_id
+    [Migration("20240517131944_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,10 @@ namespace Cinema.Infrastructure.Migrations
             modelBuilder.Entity("Cinema.Core.Domain.Entities.Category", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ApplicationUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -36,6 +40,8 @@ namespace Cinema.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Categories");
                 });
@@ -66,6 +72,7 @@ namespace Cinema.Infrastructure.Migrations
             modelBuilder.Entity("Cinema.Core.Domain.Entities.Movie", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Actors")
@@ -114,14 +121,17 @@ namespace Cinema.Infrastructure.Migrations
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.MovieCategory", b =>
                 {
-                    b.Property<Guid>("CategoryId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("MovieId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
@@ -130,45 +140,20 @@ namespace Cinema.Infrastructure.Migrations
                     b.ToTable("MovieCategories");
                 });
 
-            modelBuilder.Entity("Cinema.Core.Domain.Entities.Seat", b =>
+            modelBuilder.Entity("Cinema.Core.Domain.Entities.Session", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CinemaHallId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsBooked")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Row")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CinemaHallId");
-
-                    b.ToTable("Seats");
-                });
-
-            modelBuilder.Entity("Cinema.Core.Domain.Entities.Session", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AvailableSeats")
+                    b.Property<int>("AvailableTickets")
                         .HasColumnType("int");
 
                     b.Property<Guid>("CinemaHallId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Date")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("MovieId")
                         .HasColumnType("uniqueidentifier");
@@ -176,9 +161,8 @@ namespace Cinema.Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<string>("StartTime")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -195,19 +179,53 @@ namespace Cinema.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SeatId")
+                    b.Property<Guid>("ApplicationUserId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("BookedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsBooked")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Row")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("SessionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SeatId");
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("SessionId");
 
                     b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("Cinema.Core.Domain.Entities.UserMovieRate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ApplicationUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MovieId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("UserMovieRates");
                 });
 
             modelBuilder.Entity("Cinema.Core.Domain.IdentityEntities.ApplicationRole", b =>
@@ -416,6 +434,13 @@ namespace Cinema.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Cinema.Core.Domain.Entities.Category", b =>
+                {
+                    b.HasOne("Cinema.Core.Domain.IdentityEntities.ApplicationUser", null)
+                        .WithMany("RecentlyWatchedCategories")
+                        .HasForeignKey("ApplicationUserId");
+                });
+
             modelBuilder.Entity("Cinema.Core.Domain.Entities.MovieCategory", b =>
                 {
                     b.HasOne("Cinema.Core.Domain.Entities.Category", "Category")
@@ -433,17 +458,6 @@ namespace Cinema.Infrastructure.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("Cinema.Core.Domain.Entities.Seat", b =>
-                {
-                    b.HasOne("Cinema.Core.Domain.Entities.CinemaHall", "CinemaHall")
-                        .WithMany("Seats")
-                        .HasForeignKey("CinemaHallId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CinemaHall");
                 });
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.Session", b =>
@@ -467,21 +481,30 @@ namespace Cinema.Infrastructure.Migrations
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.Ticket", b =>
                 {
-                    b.HasOne("Cinema.Core.Domain.Entities.Seat", "Seat")
-                        .WithMany()
-                        .HasForeignKey("SeatId")
+                    b.HasOne("Cinema.Core.Domain.IdentityEntities.ApplicationUser", null)
+                        .WithMany("UserTickets")
+                        .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Cinema.Core.Domain.Entities.Session", "Session")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Seat");
-
                     b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("Cinema.Core.Domain.Entities.UserMovieRate", b =>
+                {
+                    b.HasOne("Cinema.Core.Domain.Entities.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .IsRequired()
+                        .HasConstraintName("FK_UserMovieRate_Movies");
+
+                    b.Navigation("Movie");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -537,14 +560,24 @@ namespace Cinema.Infrastructure.Migrations
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.CinemaHall", b =>
                 {
-                    b.Navigation("Seats");
-
                     b.Navigation("Sessions");
                 });
 
             modelBuilder.Entity("Cinema.Core.Domain.Entities.Movie", b =>
                 {
                     b.Navigation("Sessions");
+                });
+
+            modelBuilder.Entity("Cinema.Core.Domain.Entities.Session", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("Cinema.Core.Domain.IdentityEntities.ApplicationUser", b =>
+                {
+                    b.Navigation("RecentlyWatchedCategories");
+
+                    b.Navigation("UserTickets");
                 });
 #pragma warning restore 612, 618
         }

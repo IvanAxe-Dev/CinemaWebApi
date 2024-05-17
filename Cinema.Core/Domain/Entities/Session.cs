@@ -8,8 +8,8 @@
         public DateTime StartTime { get; set; }
         public decimal Price { get; set; }
         
-        public int AvailableSeats { get; set; }
-        public ICollection<Seat> Seats { get; set; } = new List<Seat>();
+        public int AvailableTickets { get; set; }
+        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
         public Guid MovieId { get; set; }
         public Movie Movie { get; set; }
         public Guid CinemaHallId { get; set; }

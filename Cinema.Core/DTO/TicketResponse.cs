@@ -2,8 +2,10 @@
 
 public class TicketResponse
 {
-    public Guid Id { get; set; }
-    public Guid SeatId { get; set; }
-    public Guid SessionId { get; set; }
+    public int Row { get; set; }
+    public int Number { get; set; }
+    public bool IsBooked { get; set; }
     public DateTime BookedAt { get; set; }
+    public Guid Id { get; set; }
+    public Guid SessionId { get; set; }
 }

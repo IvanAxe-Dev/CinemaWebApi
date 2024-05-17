@@ -29,7 +29,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         //add user identification as in [movie]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "ApplicationUser")]
         [HttpGet("[action]")]
         public async Task<ActionResult<List<Ticket>>> GetAllForUser()
         {
@@ -53,7 +53,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         //add user identification check as in [movie]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "ApplicationUser")]
         [HttpGet("[action]/{id:guid}")]
         public async Task<ActionResult<Ticket>> GetByIdForUser(Guid id)
         {
@@ -91,6 +91,15 @@ namespace Cinema.WebApi.Controllers
             Ticket ticket = _mapster.Map(ticketDto, existingTicket);
 
             return Ok(await _ticketService.Update(ticket));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("{sessionId:guid}")]
+        public async Task<ActionResult<List<TicketResponse>>> CreateRange(Guid sessionId)
+        {
+            List<TicketResponse> tickets = await _ticketService.CreateTicketsForSession(sessionId);
+
+            return Ok(tickets);
         }
 
         [Authorize(Roles = "Admin")]
