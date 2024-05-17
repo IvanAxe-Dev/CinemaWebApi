@@ -28,5 +28,20 @@ public static class MapsterConfig
 
         TypeAdapterConfig<Category, CategoryDto>.NewConfig()
             .Map(dest => dest.Name, src => src.Name);
+
+        TypeAdapterConfig<Session, SessionResponse>.NewConfig()
+            .Map(dest => dest.CinemaHallId, src => src.CinemaHallId)
+
+            .Map(dest => dest.AvailableSeats, src => src.AvailableTickets)
+
+            .Map(dest => dest.MovieId, src => src.MovieId)
+
+            .Map(dest => dest.StartTime, src => TimeOnly.FromDateTime(src.StartTime).ToShortTimeString())
+
+            .Map(dest => dest.Date, src => DateOnly.FromDateTime(src.Date))
+
+            .Map(dest => dest.Id, src => src.Id)
+
+            .Map(dest => dest.Price, src => src.Price);
     }
 }

@@ -14,7 +14,6 @@ using NuGet.Common;
 
 namespace Cinema.WebApi.Controllers
 {
-    [AllowAnonymous]
     public class AccountController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -36,6 +35,7 @@ namespace Cinema.WebApi.Controllers
             _mapster = mapster;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<ApplicationUser>> PostRegister(RegisterDTO registerDTO)
         {
@@ -83,8 +83,7 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
-        
-
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<ApplicationUser>>PostLogin(LoginDTO loginDTO)
         {
@@ -124,6 +123,7 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("logout")]
         public async Task<ActionResult<ApplicationUser>> GetLogout()
         {
@@ -131,6 +131,7 @@ namespace Cinema.WebApi.Controllers
             return NoContent();
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> IsEmailAlreadyRegistered(string email)
         {
@@ -144,6 +145,7 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost("generate-new-jwt-token")]
         public async Task<IActionResult> GenerateNewAccessToken(TokenModel tokenModel)
         {
