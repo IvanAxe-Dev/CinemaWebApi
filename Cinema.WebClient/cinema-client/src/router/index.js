@@ -5,6 +5,7 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import AccountView from '@/views/AccountView.vue'
 import MovieDetailsView from '@/views/MovieDetailsView.vue'
+import AllMovies from '@/views/AdminPanel/Movies/AllMovies.vue'
 
 const routes = [
   {
@@ -21,6 +22,16 @@ const routes = [
     path: '/account',
     name: 'account',
     component: AccountView
+  },
+  {
+    path: '/admin/movies',
+    name: 'admin-movies',
+    component: AllMovies,
+  },
+  {
+    path: '/admin/movies/add',
+    name: 'admin-movies',
+    component: AllMovies,
   },
   {
     path: '/about',
@@ -42,6 +53,14 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth) {
+    next({name: 'login'})
+  } else {
+    next();
+  }
 })
 
 export default router
