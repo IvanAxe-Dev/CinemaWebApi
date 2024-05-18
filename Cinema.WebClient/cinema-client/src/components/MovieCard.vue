@@ -94,7 +94,7 @@ const rentalTerm = computed(() => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .movie-item {
   background-color: #f0f0f0;
   padding: 10px;

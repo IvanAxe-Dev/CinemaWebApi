@@ -57,7 +57,7 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .app-bar {
   display: flex;
   justify-content: space-between;

@@ -43,7 +43,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 
 .movie-grid {
   padding: 20px;
