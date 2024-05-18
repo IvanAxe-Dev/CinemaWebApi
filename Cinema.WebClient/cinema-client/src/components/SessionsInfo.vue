@@ -25,7 +25,7 @@ const sessionsAvailable = computed(() => {
     <h1>Available sessions</h1>
     <div class="session-content" v-if="sessionsAvailable">
       <div v-for="(sessionGroup, i) in sessionsGroups" :key="i">
-        <span class="session-date">{{ sessionGroup.date }}</span>
+        <span class="date-of-session">{{ sessionGroup.date }}</span>
         <div v-for="(sessionData, j) in sessionGroup.sessions" :key="j">
           <div class="session-tile">
             <span class="session-data">{{ sessionData.startTime }}</span>
@@ -62,7 +62,7 @@ const sessionsAvailable = computed(() => {
   justify-content: space-between;
 }
 
-.session-date {
+.date-of-session {
   font-size: larger;
 }
 
@@ -71,7 +71,7 @@ const sessionsAvailable = computed(() => {
   background-color: #bebede;
 }
 
-.session-date, .session-data {
+.date-of-session, .session-data {
   padding: 10px;
 }
 
