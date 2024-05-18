@@ -1,20 +1,23 @@
 <template>
     <div>
-        <div class="background">
-            <div class="shape"></div>
-            <div class="shape"></div>
+        <div class="image-container">
+            <div class="background">
+                <div class="shape"></div>
+                <div class="shape"></div>
+            </div>
+            <form @submit.prevent="login">
+                <h3>Login Here</h3>
+
+                <label for="username">Username</label>
+                <input type="text" placeholder="Email or Phone" id="username" v-model="emailOrUsername">
+
+                <label for="password">Password</label>
+                <input type="password" placeholder="Password" id="password" v-model="password">
+
+                <button type="submit">Log In</button>
+                
+            </form>
         </div>
-        <form @submit.prevent="login">
-            <h3>Login Here</h3>
-
-            <label for="username">Username</label>
-            <input type="text" placeholder="Email or Phone" id="username" v-model="emailOrUsername">
-
-            <label for="password">Password</label>
-            <input type="password" placeholder="Password" id="password" v-model="password">
-
-            <button type="submit">Log In</button>
-        </form>
     </div>
 </template>
 
@@ -29,6 +32,9 @@
         },
         methods: {
             login() {
+
+
+
                 const userData = {
                     emailOrUsername: this.emailOrUsername,
                     password: this.password
@@ -99,7 +105,7 @@
     }
 
     form {
-        height: 520px;
+        height: 450px; 
         width: 400px;
         background-color: rgba(255, 255, 255, 0.13);
         position: absolute;
@@ -129,6 +135,7 @@
     }
 
     input[type="text"],
+    input[type="email"],
     input[type="password"] {
         height: 50px;
         width: 100%;
@@ -138,7 +145,7 @@
         margin-bottom: 20px;
         font-size: 14px;
         font-weight: 300;
-        color: #ffffff;
+        color: #000000; 
     }
 
     ::placeholder {
@@ -147,8 +154,8 @@
 
     button {
         width: 100%;
-        background-color: #ffffff;
-        color: #080710;
+        background-color: #808080;
+        color: #ffffff; 
         padding: 15px 0;
         font-size: 18px;
         font-weight: 600;
@@ -159,7 +166,7 @@
     }
 
         button:hover {
-            background-color: #f2f2f2;
+            background-color: #a9a9a9; 
         }
 
     .social {
@@ -186,4 +193,20 @@
         .social i {
             margin-right: 4px;
         }
+
+    input[type="text"],
+    input[type="password"] {
+        height: 50px;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.07);
+        border-radius: 3px;
+        padding: 0 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        font-weight: 300;
+        color: #000000;
+    }
+
+
+
 </style>
