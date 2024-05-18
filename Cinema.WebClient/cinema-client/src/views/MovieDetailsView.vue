@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import MovieInfo from '../components/MovieInfo.vue';
+import SessionsInfo from '../components/SessionsInfo.vue';
 import { formatPoster } from '@/utils';
 
 const movie = ref(null);
@@ -48,6 +49,7 @@ const posterImage = computed(() => {
       <button>Watch trailer</button>
     </div>
     <movie-info :movie="movie" v-if="!loading && movie"></movie-info>
+    <sessions-info :movie="movie" v-if="!loading && movie"></sessions-info>
   </div>
 </template>
 
@@ -81,15 +83,21 @@ const posterImage = computed(() => {
 }
 
 .movie-info {
+  margin-left: 15px;
+}
+
+.movie-info, .sessions-info {
+  min-width: 300px;
   flex: 1;
   padding: 20px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1084px) {
   .movie-details {
     flex-direction: column;
     align-items: center;
   }
+
   .poster-container {
     margin-bottom: 20px;
     width: 100%;
@@ -98,6 +106,10 @@ const posterImage = computed(() => {
       width: 100%;
       height: auto;
     }
+  }
+
+  .movie-info, .sessions-info {
+    width: 80%;
   }
 }
 </style>
