@@ -1,102 +1,49 @@
 <script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 import MovieInfo from '../components/MovieInfo.vue';
 
-const movie = {
-  id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  title: "The Dark Knight",
-  rentalStartDate: "2024-05-15T07:09:52.280Z",
-  rentalEndDate: "2024-05-25T07:09:52.280Z",
-  description: "string",
-  imageUrl: "https://www.movieposters.com/cdn/shop/files/darkknight.building.24x36_20e90057-f673-4cc3-9ce7-7b0d3eeb7d83_480x.progressive.jpg?v=1707491191",
-  releaseDate: "2024-05-15T07:09:52.280Z",
-  director: "Christopher Nolan",
-  duration: "string",
-  ageRestriction: 12,
-  trailerUrl: "string",
-  actors: "string",
-  ratings: [
-    6,
-    7,
-    10,
-    9,
-    8
-  ],
-  sessions: [
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "date": "string",
-      "startTime": "10:00",
-      "price": 100,
-      "availableSeats": 1,
-      "movieId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "cinemaHallId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-    },
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "date": "string",
-      "startTime": "12:00",
-      "price": 140,
-      "availableSeats": 1,
-      "movieId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "cinemaHallId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-    },
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "date": "string",
-      "startTime": "14:30",
-      "price": 160,
-      "availableSeats": 1,
-      "movieId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "cinemaHallId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-    },
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "date": "string",
-      "startTime": "16:45",
-      "price": 100,
-      "availableSeats": 1,
-      "movieId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "cinemaHallId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-    },
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "date": "string",
-      "startTime": "19:00",
-      "price": 80,
-      "availableSeats": 1,
-      "movieId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "cinemaHallId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-    }
-  ],
-  categories: [
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "name": "action"
-    },
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "name": "drama"
-    },
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "name": "fiction"
-    },
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "name": "action"
-    },
-  ]
+const movie = ref(null);
+const loading = ref(true);
+const error = ref(null);
+const router = useRouter();
+
+const fetchMovies = async (movieId) => {
+  if (!movieId || 
+      router.currentRoute.value.params.id !== movieId) {
+    return;
+  }
+
+  const url = `api/Movie/${movieId}`;
+  loading.value = true;
+  error.value = null;
+
+  try {
+    const response = await axios.get(url);
+    console.log(response);
+    movie.value = response.data;
+  } catch (e) {
+    error.value = 'Failed to load latest movies';
+    console.log(error.value);
+  } finally {
+    loading.value = false;
+  }
 }
+
+onMounted(() => {
+  fetchMovies(router.currentRoute.value.params.id);
+});
 
 </script>
 
 <template>
   <div class="movie-details">
-    <div class="poster-container">
+    <div class="poster-container" v-if="!loading && movie">
       <img :src="movie.imageUrl">
       <button>Watch trailer</button>
     </div>
-    <movie-info :movie="movie"></movie-info>
+    <movie-info :movie="movie" v-if="!loading && movie"></movie-info>
   </div>
 </template>
 

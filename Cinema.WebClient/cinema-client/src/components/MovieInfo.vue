@@ -34,8 +34,8 @@ const genres = computed(() => {
 </script>
 
 <template>
-  <div class="movie-info">
-    <h1>{{ props.movie.title }}</h1>
+  <div v-if="movie">
+    <h1>{{ movie.title }}</h1>
     <div class="info-content">
       <div class="labels">
         <div class="label">Age:</div>
@@ -47,19 +47,21 @@ const genres = computed(() => {
         <div class="label">Genre:</div>
       </div>
       <div class="values">
-        <div class="value">{{ props.movie.ageRestriction }}</div>
+        <div class="value">{{ movie.ageRestriction }}</div>
         <div class="value">{{ releaseYear }}</div>
-        <div class="value">{{ props.movie.title }}</div>
-        <div class="value">{{ props.movie.director }}</div>
+        <div class="value">{{ movie.title }}</div>
+        <div class="value">{{ movie.director }}</div>
         <div class="value">{{ rentalTerm }}</div>
         <div class="value">{{ rating }}</div>
         <div class="value">{{ genres }}</div>
       </div>
     </div>
     <div class="movie-description">
-      <span class="description">{{ props.movie.description }}</span>
+      <span class="description">{{ movie.description }}</span>
     </div>
   </div>
+  <div v-else-if="loading">Loading...</div>
+  <div v-else>Error: {{ error }}</div>
 </template>
 
 <style scoped>
