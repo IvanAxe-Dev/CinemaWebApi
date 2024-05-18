@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import MovieInfo from '../components/MovieInfo.vue';
+import { formatPoster } from '@/utils';
 
 const movie = ref(null);
 const loading = ref(true);
@@ -21,7 +22,6 @@ const fetchMovies = async (movieId) => {
 
   try {
     const response = await axios.get(url);
-    console.log(response);
     movie.value = response.data;
   } catch (e) {
     error.value = 'Failed to load latest movies';
@@ -35,19 +35,23 @@ onMounted(() => {
   fetchMovies(router.currentRoute.value.params.id);
 });
 
+const posterImage = computed(() => {
+  return formatPoster(movie.value.imageUrl, 810, 1200);
+});
+
 </script>
 
 <template>
   <div class="movie-details">
     <div class="poster-container" v-if="!loading && movie">
-      <img :src="movie.imageUrl">
+      <img :src="posterImage" alt="Movie Poster">
       <button>Watch trailer</button>
     </div>
     <movie-info :movie="movie" v-if="!loading && movie"></movie-info>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .movie-details {
   display: flex;
   align-items: flex-start;
@@ -57,10 +61,8 @@ onMounted(() => {
 }
 
 .poster-container {
-  position: fixed;
-  left: 40px;
-  width: 300px;
-  height: 600px;
+  max-width: 400px;
+  max-height: 800px;
   border-radius: 15px;
 
   img {
@@ -80,26 +82,22 @@ onMounted(() => {
 
 .movie-info {
   flex: 1;
-  margin-left: 360px;
   padding: 20px;
 }
 
 @media (max-width: 768px) {
   .movie-details {
     flex-direction: column;
+    align-items: center;
   }
   .poster-container {
-    position: static;
     margin-bottom: 20px;
     width: 100%;
 
     img {
-      height: 100%;
-      width: auto;
+      width: 100%;
+      height: auto;
     }
-  }
-  .movie-info {
-    margin-left: 0;
   }
 }
 </style>

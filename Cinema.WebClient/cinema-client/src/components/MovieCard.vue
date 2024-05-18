@@ -1,6 +1,6 @@
 <script setup>
 import { defineEmits, defineProps, computed } from 'vue';
-import { getDayMonth, getAverageRating } from '../utils.js';
+import { getDayMonth, getAverageRating, formatPoster } from '../utils.js';
 
 const props = defineProps({
   movie: {
@@ -15,12 +15,8 @@ function navigateToDetails() {
   emit('navigateToDetails', props.movie.id);
 }
 
-const placeholderPoster = "https://via.placeholder.com/810x1200";
-const imageUrlRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
-
 const imageUrl = computed(() => {
-  const isValidImageUrl = imageUrlRegex.test(props.movie.imageUrl);
-  return isValidImageUrl ? props.movie.imageUrl : placeholderPoster;
+  return formatPoster(props.movie.imageUrl);
 });
 
 const availableSessions = computed(() => {

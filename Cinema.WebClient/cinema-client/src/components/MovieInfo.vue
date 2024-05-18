@@ -34,7 +34,7 @@ const genres = computed(() => {
 </script>
 
 <template>
-  <div v-if="movie">
+  <div v-if="movie" class="movie-info">
     <h1>{{ movie.title }}</h1>
     <div class="info-content">
       <div class="labels">
@@ -64,15 +64,9 @@ const genres = computed(() => {
   <div v-else>Error: {{ error }}</div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .movie-info {
   text-align: left;
-}
-
-.blank-space {
-  background-color: rgb(62, 96, 125);
-  width: 300px;
-  height: 100%;
 }
 
 .info-content {

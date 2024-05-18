@@ -17,3 +17,10 @@ export function getAverageRating(ratingArray) {
     const sum = ratingArray.reduce((total, current) => total + current, 0);
     return (sum / ratingArray.length);
 }
+
+export function formatPoster(imageUrl, width=810, height=1200) {
+    const imageUrlRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
+    const posterPlaceholder = `https://via.placeholder.com/${width}x${height}`;
+    const isValidImageUrl = imageUrlRegex.test(imageUrl);
+    return isValidImageUrl ? imageUrl : posterPlaceholder;
+}
