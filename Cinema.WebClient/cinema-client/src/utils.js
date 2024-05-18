@@ -24,3 +24,35 @@ export function formatPoster(imageUrl, width=810, height=1200) {
     const isValidImageUrl = imageUrlRegex.test(imageUrl);
     return isValidImageUrl ? imageUrl : posterPlaceholder;
 }
+
+// Divides sessions on the same day into arrays
+function divideSessionsByDate(sessions) {
+    return sessions.reduce((accumulator, session) => {
+        const date = dayjs(session.date);
+
+        if (!accumulator[date]) accumulator[date] = [];
+
+        accumulator[date].push(session);
+
+        return accumulator;
+    }, {});
+}
+
+// Sorts sessions by date in ascending order while replacing headers with 'M D'
+function formatDateHeaders(sessions) {
+    sessions = Object.entries(sessions)
+    .sort((a, b) => new Date(b[0]) - new Date(a[0]))
+    .map(([date, sessions]) => ({ date, sessions }));
+  
+    for (let i = 0; i < sessions.length; i++) {
+        sessions[i].date = getDayMonth(sessions[i].date);
+    }
+
+    return sessions;
+}
+
+export function formatSessionsData(sessions) {
+    sessions = divideSessionsByDate(sessions);
+    sessions = formatDateHeaders(sessions);
+    return sessions;
+}
