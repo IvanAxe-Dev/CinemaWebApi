@@ -20,6 +20,9 @@ const routes = [
   {
     path: '/account',
     name: 'account',
+    meta: {
+      requiresAuth: true
+    },
     component: AccountView
   },
   {
