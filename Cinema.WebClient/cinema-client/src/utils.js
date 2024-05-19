@@ -30,6 +30,11 @@ export function formatPoster(imageSrc, width=810, height=1200) {
     return `data:image/jpeg;base64,${imageSrc}`;
 }
 
+export function validateTrailerSrc(videoSrc) {
+    const youtubeVideoRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
+    return youtubeVideoRegex.test(videoSrc);
+}
+
 // Divides sessions on the same day into arrays
 function divideSessionsByDate(sessions) {
     return sessions.reduce((accumulator, session) => {

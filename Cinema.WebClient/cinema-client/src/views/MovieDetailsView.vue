@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import MovieInfo from '../components/MovieInfo.vue';
 import SessionsInfo from '../components/SessionsInfo.vue';
-import { formatPoster } from '@/utils';
+import { formatPoster, validateTrailerSrc } from '@/utils';
 
 const movie = ref(null);
 const loading = ref(true);
@@ -40,13 +40,23 @@ const posterImage = computed(() => {
   return formatPoster(movie.value.imageUrl, 810, 1200);
 });
 
+const trailerSrcIsValid = computed(() => {
+  return validateTrailerSrc(movie.value.trailerUrl);
+});
+
+function watchTrailer() {
+  if (this.trailerSrcIsValid) {
+    window.open(this.movie.trailerUrl)
+  }
+}
+
 </script>
 
 <template>
   <div class="movie-details">
     <div class="poster-container" v-if="!loading && movie">
       <img :src="posterImage" alt="Movie Poster">
-      <button>Watch trailer</button>
+      <button v-if="trailerSrcIsValid" @click="watchTrailer()">Watch trailer</button>
     </div>
     <movie-info :movie="movie" v-if="!loading && movie"></movie-info>
     <sessions-info :movie="movie" v-if="!loading && movie"></sessions-info>
