@@ -69,6 +69,7 @@ builder.Services.AddTransient<IJwtService, JwtService>();
 
 builder.Services.AddScoped<IEmailForgotPasswordService, EmailForgotPasswordService>();
 builder.Services.AddScoped<IEmailTicketService, EmailTicketService>();
+builder.Services.AddScoped<IEmailConfirmationService, EmailConfirmationService>();
 
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();

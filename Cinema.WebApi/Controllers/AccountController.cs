@@ -23,7 +23,8 @@ namespace Cinema.WebApi.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IEmailForgotPasswordService _emailService;
+        private readonly IEmailForgotPasswordService _emailForgotPasswordService;
+        private readonly IEmailConfirmationService _emailConfirmationService;
         private readonly IJwtService _jwtService;
         private readonly IMapper _mapster;
 
@@ -31,14 +32,15 @@ namespace Cinema.WebApi.Controllers
             UserManager<ApplicationUser> userManager, 
             RoleManager<ApplicationRole> roleManager, 
             SignInManager<ApplicationUser> signInManager, 
-            IJwtService jwtService, IMapper mapster, IEmailForgotPasswordService emailService)
+            IJwtService jwtService, IMapper mapster, IEmailForgotPasswordService emailForgotPasswordService, IEmailConfirmationService emailConfirmationService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _jwtService = jwtService;
             _mapster = mapster;
-            _emailService = emailService;
+            _emailForgotPasswordService = emailForgotPasswordService;
+            _emailConfirmationService = emailConfirmationService;
         }
 
         [HttpPost("register")]
@@ -70,13 +72,15 @@ namespace Cinema.WebApi.Controllers
             {
                 await CreateUserRole(registerDTO, user);
 
-                var authenticationResponse = _jwtService.CreateJwtToken(user);
+                await SendConfirmationEmail(user);
 
-                user.RefreshToken = authenticationResponse.RefreshToken;
-                user.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
-                await _userManager.UpdateAsync(user);
+                //var authenticationResponse = _jwtService.CreateJwtToken(user);
 
-                return Ok(authenticationResponse);
+                //user.RefreshToken = authenticationResponse.RefreshToken;
+                //user.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
+                //await _userManager.UpdateAsync(user);
+
+                return Ok();
             }
             else
             {
@@ -109,6 +113,13 @@ namespace Cinema.WebApi.Controllers
             if (user is null)
             {
                 return Problem("Invalid Email/Username");
+            }
+
+            if (!user.EmailConfirmed)
+            {
+                await SendConfirmationEmail(user);
+
+                return BadRequest();
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, lockoutOnFailure: false);
@@ -213,6 +224,25 @@ namespace Cinema.WebApi.Controllers
             return NotFound();
         }
 
+        [Authorize("NotAuthenticated")]
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var result = await _userManager.ConfirmEmailAsync(user, token);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, false);
+                    return Ok();
+                }
+            }
+
+            return BadRequest();
+        }
+
+
         private async Task CreateUserRole(RegisterDTO registerDTO, ApplicationUser user)
         {
 
@@ -256,7 +286,21 @@ namespace Cinema.WebApi.Controllers
             {
                 var confirmationLink = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
                 var message = new Message(new string[] { user.Email! }, "Скидання паролю", confirmationLink!);
-                _emailService.SendEmail(message);
+                _emailForgotPasswordService.SendEmail(message);
+            }
+        }
+
+        private async Task SendConfirmationEmail(ApplicationUser? user)
+        {
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            if (!string.IsNullOrEmpty(token))
+            {
+                var confirmationLink = Url.Action("ConfirmEmail", "Account", new { token, email = user.Email }, Request.Scheme);
+                var message = new Message(new string[] { user.Email! }, "Account Confirmation", confirmationLink!);
+                _emailConfirmationService.SendEmail(message);
+
+                ///////////////////////////////////////////////////////////////////////ViewBag.Favourites = (await _userManager.FindByNameAsync(User.Identity.Name)).FavouriteHistoricalMonuments;
+
             }
         }
     }
