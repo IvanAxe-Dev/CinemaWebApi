@@ -1,30 +1,25 @@
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
+  computed: {
+    ...mapGetters('auth', ['isLoggedIn'])
+  },
   data() {
     return {
       showNavbar: true
     };
   },
   watch: {
-    // Show navbar dynamicaly based on current route
+    // Show navbar dynamically based on current route
     $route(to) {
       this.showNavbar = !["/login", "/register"].includes(to.path);
     }
   },
-
   methods: {
+    ...mapActions('auth', ['logout']),
     login() {
       this.$router.push("/login");
-      // Simulating logged in/out session logic
-      // Remove after implementation
-      this.isLoggedIn = true;
-    },
-    logout() {
-      this.$router.push("/");
-      // Simulating logged in/out session logic
-      // Remove after implementation
-      this.isLoggedIn = false;
-      this.$forceUpdate();
     },
     register() {
       this.$router.push("/register");

@@ -5,6 +5,7 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import AccountView from '@/views/AccountView.vue'
 import MovieDetailsView from '@/views/MovieDetailsView.vue'
+import store from '@/store'
 
 const routes = [
   {
@@ -48,10 +49,13 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth) {
-    next({name: 'login'})
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const isLoggedIn = store.getters.isLoggedIn
+
+  if (requiresAuth && !isLoggedIn) {
+    next('/login')
   } else {
-    next();
+    next()
   }
 })
 

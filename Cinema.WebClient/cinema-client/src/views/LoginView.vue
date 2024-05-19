@@ -1,6 +1,7 @@
 <script>
 import axios from 'axios';
 import { validateLoginData } from '@/utils';
+import { mapMutations } from 'vuex';
 
 export default {
     data() {
@@ -13,6 +14,7 @@ export default {
         };
     },
     methods: {
+        ...mapMutations(['setLoggedIn']),
         login() {
             const userData = {
                 emailOrUsername: this.emailOrUsername,
@@ -45,10 +47,15 @@ export default {
                 }
             }).then(response => {
                 console.log(response);
+                this.setLoggedIn(true);
                 this.$router.push('/');
             }).catch(error => {
-                const errorDetails = error.response.data.detail;
-                this.formatServerErrorResponse(errorDetails);
+                if (error.response.data) {
+                    const errorDetails = error.response.data.detail;
+                    this.formatServerErrorResponse(errorDetails);
+                } else {
+                    console.log(error);
+                }
             });
         },
         formatServerErrorResponse(errorDetails) {

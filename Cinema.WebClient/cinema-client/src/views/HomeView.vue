@@ -29,7 +29,7 @@ function goToDetails(movieId) {
 }
 
 onMounted(() => {
-  fetchMovies(10);
+  fetchMovies(100);
 });
 
 </script>
