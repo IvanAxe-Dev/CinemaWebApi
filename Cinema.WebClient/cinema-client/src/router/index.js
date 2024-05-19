@@ -4,12 +4,18 @@ import AboutView from '@/views/AboutView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import AccountView from '@/views/AccountView.vue'
+import MovieDetailsView from '@/views/MovieDetailsView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomeView
+  },
+  {
+    path: '/movie/:id',
+    name: 'movie-details',
+    component: MovieDetailsView,
   },
   {
     path: '/account',
