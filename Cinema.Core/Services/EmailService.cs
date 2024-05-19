@@ -7,7 +7,7 @@ using MimeKit;
 
 namespace Cinema.Core.Services
 {
-    public class EmailService : IEmailService
+    public abstract class EmailService : IEmailService
     {
         private readonly EmailConfiguration _emailConfig;
         private readonly IConfiguration _configuration;
@@ -23,21 +23,10 @@ namespace Cinema.Core.Services
             Send(emailMessage);
         }
 
-        private MimeMessage CreateEmailMessage(Message message)
-        {
-            var emailMessage = new MimeMessage();
-            var bodyBuilder = new BodyBuilder();
-            bodyBuilder.HtmlBody = $"Link to reset your password <a href={message.Content}>Link</a>";
-            
-            emailMessage.From.Add(new MailboxAddress("Cinema", _emailConfig.From));
-            emailMessage.To.AddRange(message.To);
-            emailMessage.Subject = message.Subject;
-            emailMessage.Body = bodyBuilder.ToMessageBody();
+        protected abstract MimeMessage CreateEmailMessage(Message message);
+        
 
-            return emailMessage;
-        }
-
-        private void Send(MimeMessage mailMessage)
+        protected void Send(MimeMessage mailMessage)
         {
             using var client = new SmtpClient();
             try

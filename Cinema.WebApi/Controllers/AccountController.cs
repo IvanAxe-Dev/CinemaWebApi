@@ -23,7 +23,7 @@ namespace Cinema.WebApi.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IEmailService _emailService;
+        private readonly IEmailForgotPasswordService _emailService;
         private readonly IJwtService _jwtService;
         private readonly IMapper _mapster;
 
@@ -31,7 +31,7 @@ namespace Cinema.WebApi.Controllers
             UserManager<ApplicationUser> userManager, 
             RoleManager<ApplicationRole> roleManager, 
             SignInManager<ApplicationUser> signInManager, 
-            IJwtService jwtService, IMapper mapster, IEmailService emailService)
+            IJwtService jwtService, IMapper mapster, IEmailForgotPasswordService emailService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -129,12 +129,6 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
-        [HttpGet("logout")]
-        public async Task<ActionResult<ApplicationUser>> GetLogout()
-        {
-            await _signInManager.SignOutAsync();
-            return NoContent();
-        }
 
         [HttpGet]
         public async Task<IActionResult> IsEmailAlreadyRegistered(string email)
@@ -185,7 +179,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         [HttpPost("forgot-password")]
-        [Authorize]
+        [Authorize("NotAuthenticated")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO model)
         {
             
@@ -198,7 +192,6 @@ namespace Cinema.WebApi.Controllers
         }
 
         [HttpPost("reset-password")]
-        [Authorize]
         public async Task<IActionResult> ResetPassword(ResetPasswordDTO model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);

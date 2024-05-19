@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
 {
-    [Authorize]
+    
     public class TicketController : BaseController
     {
         private readonly ITicketService _ticketService;
@@ -19,37 +19,14 @@ namespace Cinema.WebApi.Controllers
             _mapster = mapster;
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<Ticket>>> GetAllForAdmin()
+        public async Task<ActionResult<List<TicketResponse>>> GetAllTickets()
         {
             List<Ticket> tickets = await _ticketService.GetAllAsync();
 
-            return Ok(tickets);
-        }
+            var responseTickets = _mapster.Map<List<TicketResponse>>(tickets);
 
-        //add user identification as in [movie]
-        [Authorize(Roles = "User")]
-        [HttpGet("[action]")]
-        public async Task<ActionResult<List<Ticket>>> GetAllForUser()
-        {
-            List<Ticket> tickets = await _ticketService.GetAllAsync();
-
-            return Ok(tickets);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet("[action]/{id:guid}")]
-        public async Task<ActionResult<Ticket>> GetByIdForAdmin(Guid id)
-        {
-            Ticket? ticket = await _ticketService.FindByIdAsync(id);
-
-            if (ticket == null)
-            {
-                return NotFound("Ticket not found");
-            }
-
-            return Ok(ticket);
+            return Ok(responseTickets);
         }
 
         //add user identification check as in [movie]
@@ -81,7 +58,7 @@ namespace Cinema.WebApi.Controllers
         //add user identification
         [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<Ticket>> Update(Guid id, TicketDto ticketDto)
+        public async Task<ActionResult<TicketResponse>> Update(Guid id, TicketUpdateRequest ticketDto)
         {
             Ticket? existingTicket = await _ticketService.FindByIdAsync(id);
 
@@ -92,7 +69,9 @@ namespace Cinema.WebApi.Controllers
 
             Ticket ticket = _mapster.Map(ticketDto, existingTicket);
 
-            return Ok(await _ticketService.Update(ticket));
+            await _ticketService.Update(ticket);
+
+            return Ok(_mapster.Map<TicketResponse>(ticket));
         }
 
         [Authorize(Roles = "Admin")]
