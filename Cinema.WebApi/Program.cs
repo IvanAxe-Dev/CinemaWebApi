@@ -14,6 +14,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Cinema.Core.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,9 +60,13 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
+builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
+
 builder.Services.AddLogging();
 
 builder.Services.AddTransient<IJwtService, JwtService>();
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();

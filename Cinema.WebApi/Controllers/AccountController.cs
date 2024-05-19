@@ -4,21 +4,26 @@ using Cinema.Core.Domain.Entities;
 using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.DTO;
 using Cinema.Core.Enums;
+using Cinema.Core.Models;
 using Cinema.Core.ServiceContracts;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Build.Framework;
+using MimeKit.Text;
 using NuGet.Common;
 
 namespace Cinema.WebApi.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IEmailService _emailService;
         private readonly IJwtService _jwtService;
         private readonly IMapper _mapster;
 
@@ -26,16 +31,16 @@ namespace Cinema.WebApi.Controllers
             UserManager<ApplicationUser> userManager, 
             RoleManager<ApplicationRole> roleManager, 
             SignInManager<ApplicationUser> signInManager, 
-            IJwtService jwtService, IMapper mapster)
+            IJwtService jwtService, IMapper mapster, IEmailService emailService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _jwtService = jwtService;
             _mapster = mapster;
+            _emailService = emailService;
         }
 
-        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<ApplicationUser>> PostRegister(RegisterDTO registerDTO)
         {
@@ -83,7 +88,8 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        
+
         [HttpPost("login")]
         public async Task<ActionResult<ApplicationUser>>PostLogin(LoginDTO loginDTO)
         {
@@ -123,7 +129,6 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet("logout")]
         public async Task<ActionResult<ApplicationUser>> GetLogout()
         {
@@ -131,7 +136,6 @@ namespace Cinema.WebApi.Controllers
             return NoContent();
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> IsEmailAlreadyRegistered(string email)
         {
@@ -145,7 +149,6 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("generate-new-jwt-token")]
         public async Task<IActionResult> GenerateNewAccessToken(TokenModel tokenModel)
         {
@@ -181,7 +184,42 @@ namespace Cinema.WebApi.Controllers
             return Ok(authenticationResponse);
         }
 
-        [Authorize(Roles = "Admin")]
+        [HttpPost("forgot-password")]
+        [Authorize]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO model)
+        {
+            
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                
+                await SendForgotPasswordEmail(user);
+
+                return Ok();
+            
+        }
+
+        [HttpPost("reset-password")]
+        [Authorize]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return BadRequest();
+            }
+
+            return NotFound();
+        }
+
         private async Task CreateUserRole(RegisterDTO registerDTO, ApplicationUser user)
         {
 
@@ -215,6 +253,17 @@ namespace Cinema.WebApi.Controllers
                     await _userManager.AddToRoleAsync(user, UserRoleOptions.User.ToString());
                     break;
                 }
+            }
+        }
+
+        private async Task SendForgotPasswordEmail(ApplicationUser? user)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            if (!string.IsNullOrEmpty(token))
+            {
+                var confirmationLink = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
+                var message = new Message(new string[] { user.Email! }, "Скидання паролю", confirmationLink!);
+                _emailService.SendEmail(message);
             }
         }
     }
