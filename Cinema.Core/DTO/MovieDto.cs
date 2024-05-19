@@ -26,5 +26,4 @@ public class MovieDto
 
     public string? Actors { get; set; }
 
-    public List<int>? Ratings { get; set; }
 }

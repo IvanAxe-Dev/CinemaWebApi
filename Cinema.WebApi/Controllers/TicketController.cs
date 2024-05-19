@@ -1,8 +1,10 @@
 using Cinema.Core.Domain.Entities;
+using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
@@ -12,11 +14,13 @@ namespace Cinema.WebApi.Controllers
     {
         private readonly ITicketService _ticketService;
         private readonly IMapper _mapster;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TicketController(ITicketService ticketService, IMapper mapster)
+        public TicketController(ITicketService ticketService, IMapper mapster, UserManager<ApplicationUser> userManager)
         {
             _ticketService = ticketService;
             _mapster = mapster;
+            _userManager = userManager;
         }
 
         [HttpGet("[action]")]
@@ -32,16 +36,18 @@ namespace Cinema.WebApi.Controllers
         //add user identification check as in [movie]
         [Authorize(Roles = "User")]
         [HttpGet("[action]/{id:guid}")]
-        public async Task<ActionResult<Ticket>> GetByIdForUser(Guid id)
+        public async Task<ActionResult<TicketResponse>> GetByIdForUser(Guid id)
         {
             Ticket? ticket = await _ticketService.FindByIdAsync(id);
 
-            if (ticket == null)
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            if (ticket == null || user.Id != ticket.ApplicationUserId)
             {
                 return NotFound("Ticket not found");
             }
 
-            return Ok(ticket);
+            return Ok(_mapster.Map<TicketResponse>(ticket));
         }
 
         //add user identification

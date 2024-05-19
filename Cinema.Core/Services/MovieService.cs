@@ -6,6 +6,7 @@ using Cinema.Core.ServiceContracts;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Security.Claims;
 
 namespace Cinema.Core.Services
@@ -64,7 +65,7 @@ namespace Cinema.Core.Services
 
             foreach (var category in categories)
             {
-                appUser.RecentlyWatchedCategories.Prepend(_mapster.Map<Category>(category));
+                appUser.RecentlyWatchedCategories.Add(_mapster.Map<Category>(category));
             }
             
             if (appUser.RecentlyWatchedCategories.Count > RECENTLY_WATCHED_CATEGORIES_MAX)
@@ -172,7 +173,7 @@ namespace Cinema.Core.Services
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                movies = movies.Where(m => m.Title.Contains(request.SearchTerm)).ToList();
+                movies = movies.Where(m => m.Title.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             if (request.DateStartInterval is not null && request.DateEndInterval is not null)

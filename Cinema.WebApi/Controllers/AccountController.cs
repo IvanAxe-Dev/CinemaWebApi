@@ -63,14 +63,13 @@ namespace Cinema.WebApi.Controllers
             {
                 UserName = registerDTO.Username,
                 Email = registerDTO.Email,
-                Role = registerDTO.Role,
                 UserTickets = new List<Ticket>()
             };
 
             var result = await _userManager.CreateAsync(user, registerDTO.Password);
             if (result.Succeeded)
             {
-                await CreateUserRole(registerDTO, user);
+                await CreateUserRole(user);
 
                 await SendConfirmationEmail(user);
 
@@ -115,7 +114,7 @@ namespace Cinema.WebApi.Controllers
                 return Problem("Invalid Email/Username");
             }
 
-            if (!user.EmailConfirmed)
+            if (!await _userManager.IsInRoleAsync(user, UserRoleOptions.Admin.ToString()) && !user.EmailConfirmed)
             {
                 await SendConfirmationEmail(user);
 
@@ -141,18 +140,7 @@ namespace Cinema.WebApi.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> IsEmailAlreadyRegistered(string email)
-        {
-            if (await _userManager.FindByEmailAsync(email) is null)
-            {
-                return Ok(true);
-            }
-            else
-            {
-                return Ok(false);
-            }
-        }
+        
 
         [HttpPost("generate-new-jwt-token")]
         public async Task<IActionResult> GenerateNewAccessToken(TokenModel tokenModel)
@@ -243,40 +231,18 @@ namespace Cinema.WebApi.Controllers
         }
 
 
-        private async Task CreateUserRole(RegisterDTO registerDTO, ApplicationUser user)
+        private async Task CreateUserRole(ApplicationUser user)
         {
-
-            switch (registerDTO.Role)
+            if (await _roleManager.FindByNameAsync(UserRoleOptions.User.ToString()) is null)
             {
-                case UserRoleOptions.Admin:
+                var applicationRole = new ApplicationRole()
                 {
-                    if (await _roleManager.FindByNameAsync(UserRoleOptions.Admin.ToString()) is null)
-                    {
-                        var applicationRole = new ApplicationRole()
-                        {
-                            Name = UserRoleOptions.Admin.ToString(),
-                        };
-                        await _roleManager.CreateAsync(applicationRole);
-                    }
-
-                    await _userManager.AddToRoleAsync(user, UserRoleOptions.Admin.ToString());
-                    break;
-                }
-                case UserRoleOptions.User:
-                {
-                    if (await _roleManager.FindByNameAsync(UserRoleOptions.User.ToString()) is null)
-                    {
-                        var applicationRole = new ApplicationRole()
-                        {
-                            Name = UserRoleOptions.User.ToString(),
-                        };
-                        await _roleManager.CreateAsync(applicationRole);
-                    }
-
-                    await _userManager.AddToRoleAsync(user, UserRoleOptions.User.ToString());
-                    break;
-                }
+                    Name = UserRoleOptions.User.ToString(),
+                };
+                await _roleManager.CreateAsync(applicationRole);
             }
+
+            await _userManager.AddToRoleAsync(user, UserRoleOptions.User.ToString());
         }
 
         private async Task SendForgotPasswordEmail(ApplicationUser? user)
@@ -299,7 +265,6 @@ namespace Cinema.WebApi.Controllers
                 var message = new Message(new string[] { user.Email! }, "Account Confirmation", confirmationLink!);
                 _emailConfirmationService.SendEmail(message);
 
-                ///////////////////////////////////////////////////////////////////////ViewBag.Favourites = (await _userManager.FindByNameAsync(User.Identity.Name)).FavouriteHistoricalMonuments;
 
             }
         }

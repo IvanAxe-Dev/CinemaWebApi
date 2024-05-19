@@ -100,7 +100,7 @@ namespace Cinema.WebApi.Controllers
         [HttpPost("{id:guid}/rate")]
         public async Task<ActionResult<MovieResponse>> Rate(Guid id, [FromBody] int rating)
         {
-            if (rating < 1 || rating > 10)
+            if (rating < 1 || rating > 5)
             {
                 return BadRequest("Rating must be between 1 and 5");
             }
@@ -118,10 +118,10 @@ namespace Cinema.WebApi.Controllers
         }
 
         [Authorize(Roles = "User")]
-        [HttpGet("{userId:guid}/recommended")]
+        [HttpGet("recommended")]
         public async Task<ActionResult<List<MovieResponse>>> GetRecommendedMovies()
         {
-            ApplicationUser? user = await _userManager.GetUserAsync(User);
+            ApplicationUser? user = await _userManager.FindByNameAsync(User.Identity!.Name!);
 
             List<MovieResponse> movies = await _movieService.GetRecommendedMovies(user!);
 
@@ -130,7 +130,7 @@ namespace Cinema.WebApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<MovieResponse>> Update(Guid id, MovieDto movieDto)
+        public async Task<ActionResult<MovieResponse>> Update(Guid id, MovieUpdateRequest movieDto)
         {
             Movie? existingMovie = await _movieService.FindByIdAsync(id);
 
