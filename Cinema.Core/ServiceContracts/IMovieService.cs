@@ -12,7 +12,7 @@ namespace Cinema.Core.ServiceContracts
         Task<List<MovieResponse>> TakeNLatestMovies(int? moviesToTake);
         Task<List<MovieResponse>> GetFilteredMovies(GetMoviesQuery request);
         Task RateMovie(Guid movieId, ClaimsPrincipal user, int rating);
-        Task<List<MovieResponse>> GetRecommendedMovies(ApplicationUser user);
+        Task<List<MovieResponse>> GetRecommendedMovies(ClaimsPrincipal user);
         Task UploadImageToMovie(Guid id, string image);
         Task UpdateRecentlyWatchedCategoriesAsync(ClaimsPrincipal user, IEnumerable<CategoryResponse> categories);
     }
