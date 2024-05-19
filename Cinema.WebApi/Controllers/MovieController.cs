@@ -96,7 +96,7 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
-        [Authorize(Roles = "ApplicationUser")]
+        [Authorize(Roles = "User")]
         [HttpPost("{id:guid}/rate")]
         public async Task<ActionResult<MovieResponse>> Rate(Guid id, [FromBody] int rating)
         {
@@ -117,7 +117,7 @@ namespace Cinema.WebApi.Controllers
             return Ok("Movie rated successfully");
         }
 
-        [Authorize(Roles = "ApplicationUser")]
+        [Authorize(Roles = "User")]
         [HttpGet("{userId:guid}/recommended")]
         public async Task<ActionResult<List<MovieResponse>>> GetRecommendedMovies()
         {
