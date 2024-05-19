@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    isLoggedIn: false
+    isLoggedIn: localStorage.getItem('isLoggedIn') === 'true'
   },
   getters: {
     isLoggedIn: state => state.isLoggedIn
@@ -10,6 +10,7 @@ export default createStore({
   mutations: {
     setLoggedIn(state, isLoggedIn) {
       state.isLoggedIn = isLoggedIn
+      localStorage.setItem('isLoggedIn', isLoggedIn);
     }
   },
   actions: {
