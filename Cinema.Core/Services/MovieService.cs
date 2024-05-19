@@ -6,6 +6,8 @@ using Cinema.Core.ServiceContracts;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
@@ -63,18 +65,24 @@ namespace Cinema.Core.Services
 
             if (appUser == null) return;
 
+            List<string> recentlyWatchedCategories = JsonConvert.DeserializeObject<List<string>>(appUser.RecentlyWatchedCategories);
+
+            recentlyWatchedCategories ??= new List<string>();
+
             foreach (var category in categories)
             {
-                appUser.RecentlyWatchedCategories.Add(_mapster.Map<Category>(category));
+                recentlyWatchedCategories = recentlyWatchedCategories.Prepend(category.Name).ToList();
             }
-            
-            if (appUser.RecentlyWatchedCategories.Count > RECENTLY_WATCHED_CATEGORIES_MAX)
+
+            if (recentlyWatchedCategories.Count > RECENTLY_WATCHED_CATEGORIES_MAX)
             {
-                for (int i = RECENTLY_WATCHED_CATEGORIES_MAX; i < appUser.RecentlyWatchedCategories.Count; i++)
+                for (int i = RECENTLY_WATCHED_CATEGORIES_MAX; i < recentlyWatchedCategories.Count; i++)
                 {
                     appUser.RecentlyWatchedCategories.Remove(appUser.RecentlyWatchedCategories.ElementAt(i));
                 }
             }
+
+            appUser.RecentlyWatchedCategories = JsonConvert.SerializeObject(recentlyWatchedCategories);
 
             await _userManager.UpdateAsync(appUser);
         }
@@ -123,15 +131,26 @@ namespace Cinema.Core.Services
             await _userMovieRateService.Insert(userMovieRate);
         }
 
-        public async Task<List<MovieResponse>> GetRecommendedMovies(ApplicationUser user)
+        public async Task<List<MovieResponse>> GetRecommendedMovies(ClaimsPrincipal user)
         {
-            var recentCategories = user.RecentlyWatchedCategories.ToList();
+            var appUser = await _userManager.GetUserAsync(user);
 
-            var recommendedMovies = await _movieCategoryRepository.GetWhere(mc => recentCategories.Contains(mc.Category))
+            List<string>? recentlyWatchedCategories = JsonConvert.DeserializeObject<List<string>>(appUser.RecentlyWatchedCategories);
+
+            recentlyWatchedCategories ??= new List<string>();
+
+            List<Movie> recommendedMovies = await _movieCategoryRepository.GetWhere(mc => recentlyWatchedCategories.Contains(mc.Category.Name))
                 .Select(mc => mc.Movie)
                 .ToListAsync();
 
-            return _mapster.Map<List<MovieResponse>>(recommendedMovies);
+            List<MovieResponse> movieResponses = new List<MovieResponse>();
+
+            foreach (var movie in recommendedMovies)
+            {
+                movieResponses.Add(await GetMovieWithCategoriesById(movie.Id, user));
+            }
+
+            return movieResponses;
         }
 
         public async Task<List<MovieResponse>> TakeNLatestMovies(int? moviesToTake)

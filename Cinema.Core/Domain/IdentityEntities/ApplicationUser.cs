@@ -12,6 +12,6 @@ namespace Cinema.Core.Domain.IdentityEntities
         public UserRoleOptions Role { get; set; } = UserRoleOptions.User;
         public ICollection<Ticket> UserTickets { get; set; } = new List<Ticket>();
 
-        public ICollection<Category> RecentlyWatchedCategories { get; set; } = new List<Category>();
+        public string RecentlyWatchedCategories { get; set; } = string.Empty;
     }
 }

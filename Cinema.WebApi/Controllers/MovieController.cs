@@ -121,9 +121,7 @@ namespace Cinema.WebApi.Controllers
         [HttpGet("recommended")]
         public async Task<ActionResult<List<MovieResponse>>> GetRecommendedMovies()
         {
-            ApplicationUser? user = await _userManager.FindByNameAsync(User.Identity!.Name!);
-
-            List<MovieResponse> movies = await _movieService.GetRecommendedMovies(user!);
+            List<MovieResponse> movies = await _movieService.GetRecommendedMovies(User);
 
             return Ok(movies);
         }
