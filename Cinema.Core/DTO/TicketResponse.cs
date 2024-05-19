@@ -8,4 +8,5 @@ public class TicketResponse
     public DateTime BookedAt { get; set; }
     public Guid Id { get; set; }
     public Guid SessionId { get; set; }
+
 }

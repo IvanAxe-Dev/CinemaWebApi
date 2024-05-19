@@ -43,5 +43,9 @@ public static class MapsterConfig
             .Map(dest => dest.Id, src => src.Id)
 
             .Map(dest => dest.Price, src => src.Price);
+
+        
+
+
     }
 }

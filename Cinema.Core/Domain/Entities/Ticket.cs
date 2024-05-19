@@ -8,6 +8,8 @@
         public DateTime BookedAt { get; set; }
         public Guid SessionId { get; set; }
         public Session Session { get; set; }
-        public Guid ApplicationUserId { get; set; }
+        public Guid? ApplicationUserId { get; set; }
+
+        
     }
 }

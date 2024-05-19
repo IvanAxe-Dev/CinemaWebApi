@@ -12,7 +12,6 @@ namespace Cinema.Core.DTO
 
         [Required(ErrorMessage = "Email Address can't be blank")]
         [EmailAddress(ErrorMessage = "Email should be in proper email address format")]
-        [Remote(action: "IsEmailAlreadyRegistered", controller: "Account", ErrorMessage = "Email is already in use")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Password can't be blank")]
@@ -21,8 +20,6 @@ namespace Cinema.Core.DTO
         [Required(ErrorMessage = "Repeat Password can't be blank")]
         [Compare(nameof(Password), ErrorMessage = "Password and Repeat Password do not match")]
         public string RepeatPassword { get; set; } = string.Empty;
-
-        public UserRoleOptions Role { get; set; }
 
     }
 }

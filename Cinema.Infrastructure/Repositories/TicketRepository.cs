@@ -14,7 +14,8 @@ namespace Cinema.Infrastructure.Repositories
         protected override IQueryable<Ticket> PrepareDbSet()
         {
             return base.PrepareDbSet()
-                .Include(x => x.Session);
+                .Include(x => x.Session)
+                .Include(x => x.Session.CinemaHall);
         }
         public async Task PostRange(List<Ticket> entity)
         {
