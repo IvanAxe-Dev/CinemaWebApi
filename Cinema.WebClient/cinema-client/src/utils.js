@@ -8,21 +8,26 @@ export function formatDate(dateString) {
 export function getDayMonth(dateString) {
     const date = new Date(dateString);
     const day = date.getDay();
-    const month = date.toLocaleString('default', { month: 'long'});
+    const month = date.toLocaleString('en', { month: 'long'});
     return `${day} ${month}`;
 }
 
 export function getAverageRating(ratingArray) {
     if (!ratingArray.length > 0) return 0;
     const sum = ratingArray.reduce((total, current) => total + current, 0);
-    return (sum / ratingArray.length);
+    return Math.round((sum / ratingArray.length));
 }
 
-export function formatPoster(imageUrl, width=810, height=1200) {
+export function formatPoster(imageSrc, width=810, height=1200) {
     const imageUrlRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
+    const isValidImageUrl = imageUrlRegex.test(imageSrc);
     const posterPlaceholder = `https://via.placeholder.com/${width}x${height}`;
-    const isValidImageUrl = imageUrlRegex.test(imageUrl);
-    return isValidImageUrl ? imageUrl : posterPlaceholder;
+
+    if (isValidImageUrl) return imageSrc;
+
+    if (imageSrc.length < 255) return posterPlaceholder;
+
+    return `data:image/jpeg;base64,${imageSrc}`;
 }
 
 // Divides sessions on the same day into arrays
