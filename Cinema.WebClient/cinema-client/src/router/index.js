@@ -1,13 +1,15 @@
-    import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import AccountView from '@/views/AccountView.vue'
 import MovieDetailsView from '@/views/MovieDetailsView.vue'
-import AdminAddMovieView from '@/views/AdminAddMovieView.vue';
+import AdminPanel from '../views/Dashboard/AdminPanel.vue'
 
 import store from '@/store'
+import UpdateView from '@/views/Dashboard/Movies/UpdateView.vue'
+import UploadView from '@/views/Dashboard/Movies/UploadView.vue'
 
 const routes = [
   {
@@ -44,13 +46,25 @@ const routes = [
     component: RegisterView
     },
   {
-        path: '/admin',
-        name: 'admin',
-        meta: {
-            requiresAuth: true
-        },
-      component: AdminAddMovieView
+    path: '/admin',
+    name: 'admin',
+    meta: {
+        requiresAuth: true
     },
+    component: AdminPanel,
+    children: [
+      {
+        path: 'upload',
+        name: 'upload-movies',
+        component: UploadView
+      },
+      {
+        path: 'update',
+        name: 'update-movies',
+        component: UpdateView
+      }
+    ]
+},
 ]
 
 const router = createRouter({
