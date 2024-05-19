@@ -1,84 +1,91 @@
+
 <template>
     <div id="app">
         <h1>{{ movie.id ? 'Edit Movie' : 'Add Movie' }}</h1>
-        <form @submit.prevent="submitMovie" class="movie-form">
+        <button @click="showPutFields">PUT</button>
+        <button @click="showGetFields">GET</button>
+        <form v-if="putVisible" @submit.prevent="submitMovie" class="movie-form">
+            <!-- Put -->
             <h2>Movie ID</h2>
             <div class="form-group">
                 <label for="id">ID:</label>
                 <input v-model="movie.id" type="text" id="id" name="id" class="form-control" />
             </div>
-            <h2>Search and Categories</h2>
-            <div class="form-group">
-                <label for="searchTerm">Search Term:</label>
-                <input v-model="movie.searchTerm" type="text" id="searchTerm" name="searchTerm" required class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="categories">Categories:</label>
-                <input v-model="movie.categories" type="text" id="categories" name="categories" required class="form-control" />
-            </div>
-            <h2>Date and Time Intervals</h2>
-            <div class="form-group">
-                <label for="dateStartInterval">Date Start Interval:</label>
-                <input v-model="movie.dateStartInterval" type="datetime-local" id="dateStartInterval" name="dateStartInterval" required class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="dateEndInterval">Date End Interval:</label>
-                <input v-model="movie.dateEndInterval" type="datetime-local" id="dateEndInterval" name="dateEndInterval" required class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="timeStartInterval">Time Start Interval:</label>
-                <input v-model="movie.timeStartInterval" type="time" id="timeStartInterval" name="timeStartInterval" required class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="timeEndInterval">Time End Interval:</label>
-                <input v-model="movie.timeEndInterval" type="time" id="timeEndInterval" name="timeEndInterval" required class="form-control" />
-            </div>
-            <h2>Movie Details</h2>
             <div class="form-group">
                 <label for="title">Title:</label>
-                <input v-model="movie.title" type="text" id="title" name="title" required class="form-control" />
+                <input v-model="movie.title" type="text" id="title" name="title" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="rentalStartDate">Rental Start Date:</label>
-                <input v-model="movie.rentalStartDate" type="datetime-local" id="rentalStartDate" name="rentalStartDate" required class="form-control" />
+                <input v-model="movie.rentalStartDate" type="datetime-local" id="rentalStartDate" name="rentalStartDate" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="rentalEndDate">Rental End Date:</label>
-                <input v-model="movie.rentalEndDate" type="datetime-local" id="rentalEndDate" name="rentalEndDate" required class="form-control" />
+                <input v-model="movie.rentalEndDate" type="datetime-local" id="rentalEndDate" name="rentalEndDate" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="description">Description:</label>
-                <input v-model="movie.description" type="text" id="description" name="description" required class="form-control" />
+                <input v-model="movie.description" type="text" id="description" name="description" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="imageUrl">Image URL:</label>
-                <input v-model="movie.imageUrl" type="text" id="imageUrl" name="imageUrl" required class="form-control" />
+                <input v-model="movie.imageUrl" type="text" id="imageUrl" name="imageUrl" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="releaseDate">Release Date:</label>
-                <input v-model="movie.releaseDate" type="datetime-local" id="releaseDate" name="releaseDate" required class="form-control" />
+                <input v-model="movie.releaseDate" type="datetime-local" id="releaseDate" name="releaseDate" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="director">Director:</label>
-                <input v-model="movie.director" type="text" id="director" name="director" required class="form-control" />
+                <input v-model="movie.director" type="text" id="director" name="director" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="duration">Duration:</label>
-                <input v-model="movie.duration" type="text" id="duration" name="duration" required class="form-control" />
+                <input v-model="movie.duration" type="text" id="duration" name="duration" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="ageRestriction">Age Restriction:</label>
-                <input v-model="movie.ageRestriction" type="number" id="ageRestriction" name="ageRestriction" required class="form-control" />
+                <input v-model="movie.ageRestriction" type="number" id="ageRestriction" name="ageRestriction" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="trailerUrl">Trailer URL:</label>
-                <input v-model="movie.trailerUrl" type="text" id="trailerUrl" name="trailerUrl" required class="form-control" />
+                <input v-model="movie.trailerUrl" type="text" id="trailerUrl" name="trailerUrl" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="actors">Actors:</label>
-                <input v-model="movie.actors" type="text" id="actors" name="actors" required class="form-control" />
+                <input v-model="movie.actors" type="text" id="actors" name="actors" class="form-control" />
             </div>
+            <!-- Get -->
             <button type="submit" class="btn btn-primary">{{ movie.id ? 'Update' : 'Add' }} Movie</button>
+        </form>
+        <form v-if="getVisible" @submit.prevent="submitMovie" class="movie-form">
+            <h2>Search and Categories</h2>
+            <div class="form-group">
+                <label for="searchTerm">Search Term:</label>
+                <input v-model="movie.searchTerm" type="text" id="searchTerm" name="searchTerm" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="categories">Categories:</label>
+                <input v-model="movie.categories" type="text" id="categories" name="categories" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="dateStartInterval">Date Start Interval:</label>
+                <input v-model="movie.dateStartInterval" type="datetime-local" id="dateStartInterval" name="dateStartInterval" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="dateEndInterval">Date End Interval:</label>
+                <input v-model="movie.dateEndInterval" type="datetime-local" id="dateEndInterval" name="dateEndInterval" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="timeStartInterval">Time Start Interval:</label>
+                <input v-model="movie.timeStartInterval" type="time" id="timeStartInterval" name="timeStartInterval" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="timeEndInterval">Time End Interval:</label>
+                <input v-model="movie.timeEndInterval" type="time" id="timeEndInterval" name="timeEndInterval" class="form-control" />
+            </div>
+           
+            <button type="submit" class="btn btn-primary">Get Movie Data</button>
         </form>
 
         <div v-if="showPopup" class="popup">
@@ -119,11 +126,13 @@
                 },
                 showPopup: false,
                 popupMessage: "",
+                putVisible: false,
+                getVisible: false
             };
         },
         methods: {
             submitMovie() {
-                if (this.movie.id) {
+                if (this.putVisible) {
                     axios.put(`/api/Movie/${this.movie.id}`, {
                         title: this.movie.title,
                         rentalStartDate: this.movie.rentalStartDate,
@@ -148,7 +157,7 @@
                             this.popupMessage = "An error occurred while updating the movie.";
                             this.showPopup = true;
                         });
-                } else {
+                } else if (this.getVisible) {
                     axios.get('/api/Movie', {
                         params: {
                             SearchTerm: this.movie.searchTerm,
@@ -171,6 +180,16 @@
                             this.showPopup = true;
                         });
                 }
+            },
+            showPutFields() {
+                this.putVisible = true;
+                this.getVisible = false;
+                this.clearForm();
+            },
+            showGetFields() {
+                this.putVisible = false;
+                this.getVisible = true;
+                this.clearForm();
             },
             clearForm() {
                 this.movie = {
@@ -202,26 +221,5 @@
 </script>
 
 <style scoped>
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    .popup {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .popup-content {
-        background: white;
-        padding: 20px;
-        border-radius: 5px;
-        text-align: center;
-    }
+   
 </style>
