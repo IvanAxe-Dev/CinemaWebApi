@@ -1,39 +1,69 @@
 <script>
 import axios from 'axios';
+import { validateLoginData } from '@/utils';
+
 export default {
     data() {
         return {
             emailOrUsername: '',
-            password: ''
+            password: '',
+            emailPlaceholder: 'Username or Email',
+            passwordPlaceholder: 'Password',
+            requestError: ''
         };
     },
     methods: {
         login() {
-
-
-
             const userData = {
                 emailOrUsername: this.emailOrUsername,
                 password: this.password
             };
 
-            console.log(userData);
-            // ��������� POST-������
+            const invalidStatus = validateLoginData(userData);
+
+            if (invalidStatus.invalid === true) {
+                if (invalidStatus.username) {
+                    this.emailOrUsername = "";
+                    this.emailPlaceholder = "Username must be 5-50 characters long";
+                }
+
+                if (invalidStatus.password) {
+                    this.password = "";
+                    this.passwordPlaceholder = "Invalid password";
+                }
+            } else {
+                this.postData();
+            }
+        },
+        postData() {
             axios({
                 method: 'post',
                 url: 'api/Account/login',
                 data: {
-                    emailOrUsername: userData.emailOrUsername,
-                    password: userData.password
+                    emailOrUsername: this.emailOrUsername,
+                    password: this.password
                 }
             }).then(response => {
                 console.log(response);
+                this.$router.push('/');
             }).catch(error => {
-                console.error(error);
+                const errorDetails = error.response.data.detail;
+                this.formatServerErrorResponse(errorDetails);
             });
-
-
-        }
+        },
+        formatServerErrorResponse(errorDetails) {
+            if (errorDetails === "Invalid Email/Username") {
+                this.emailOrUsername = '';
+                this.emailPlaceholder = errorDetails;
+            }
+            if (errorDetails === "Invalid Password") {
+                this.password = '';
+                this.passwordPlaceholder = errorDetails;
+            } else {
+                this.emailOrUsername, this.password = '';
+                this.emailPlaceholder, this.passwordPlaceholder = errorDetails;
+            }
+        },
     }
 };
 </script>
@@ -49,10 +79,10 @@ export default {
                 <h3>Login Here</h3>
 
                 <label for="username">Username</label>
-                <input type="text" placeholder="Email or Phone" id="username" v-model="emailOrUsername">
+                <input type="text" :placeholder="emailPlaceholder" id="username" v-model="emailOrUsername">
 
                 <label for="password">Password</label>
-                <input type="password" placeholder="Password" id="password" v-model="password">
+                <input type="password" :placeholder="passwordPlaceholder" id="password" v-model="password">
 
                 <button type="submit">Log In</button>
 

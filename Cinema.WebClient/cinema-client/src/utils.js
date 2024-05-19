@@ -56,3 +56,15 @@ export function formatSessionsData(sessions) {
     sessions = formatDateHeaders(sessions);
     return sessions;
 }
+
+export function validateLoginData(userData) {
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
+    const usernameValid = userData.emailOrUsername.length < 50 && userData.emailOrUsername.length > 5;
+    const passwordValid = passwordRegex.test(userData.password);
+    
+    let status = {invalid: new Boolean(false)};
+    if (!passwordValid) status.password = new Boolean(true), status.invalid = new Boolean(true);
+    if (!usernameValid) status.username = new Boolean(true), status.invalid = new Boolean(true);
+
+    return status;
+}
