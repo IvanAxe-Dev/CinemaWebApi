@@ -14,6 +14,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Cinema.Core.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,9 +61,15 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
+builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
+
 builder.Services.AddLogging();
 
 builder.Services.AddTransient<IJwtService, JwtService>();
+
+builder.Services.AddScoped<IEmailForgotPasswordService, EmailForgotPasswordService>();
+builder.Services.AddScoped<IEmailTicketService, EmailTicketService>();
+builder.Services.AddScoped<IEmailConfirmationService, EmailConfirmationService>();
 
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -132,7 +141,13 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-
+    options.AddPolicy("NotAuthenticated", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            return !context.User.Identity.IsAuthenticated;
+        });
+    });
 });
 
 var app = builder.Build();

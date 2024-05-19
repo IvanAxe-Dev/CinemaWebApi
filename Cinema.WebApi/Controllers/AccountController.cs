@@ -4,21 +4,27 @@ using Cinema.Core.Domain.Entities;
 using Cinema.Core.Domain.IdentityEntities;
 using Cinema.Core.DTO;
 using Cinema.Core.Enums;
+using Cinema.Core.Models;
 using Cinema.Core.ServiceContracts;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Build.Framework;
+using MimeKit.Text;
 using NuGet.Common;
 
 namespace Cinema.WebApi.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IEmailForgotPasswordService _emailForgotPasswordService;
+        private readonly IEmailConfirmationService _emailConfirmationService;
         private readonly IJwtService _jwtService;
         private readonly IMapper _mapster;
 
@@ -26,16 +32,17 @@ namespace Cinema.WebApi.Controllers
             UserManager<ApplicationUser> userManager, 
             RoleManager<ApplicationRole> roleManager, 
             SignInManager<ApplicationUser> signInManager, 
-            IJwtService jwtService, IMapper mapster)
+            IJwtService jwtService, IMapper mapster, IEmailForgotPasswordService emailForgotPasswordService, IEmailConfirmationService emailConfirmationService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _jwtService = jwtService;
             _mapster = mapster;
+            _emailForgotPasswordService = emailForgotPasswordService;
+            _emailConfirmationService = emailConfirmationService;
         }
 
-        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<ApplicationUser>> PostRegister(RegisterDTO registerDTO)
         {
@@ -56,22 +63,23 @@ namespace Cinema.WebApi.Controllers
             {
                 UserName = registerDTO.Username,
                 Email = registerDTO.Email,
-                Role = registerDTO.Role,
                 UserTickets = new List<Ticket>()
             };
 
             var result = await _userManager.CreateAsync(user, registerDTO.Password);
             if (result.Succeeded)
             {
-                await CreateUserRole(registerDTO, user);
+                await CreateUserRole(user);
 
-                var authenticationResponse = _jwtService.CreateJwtToken(user);
+                await SendConfirmationEmail(user);
 
-                user.RefreshToken = authenticationResponse.RefreshToken;
-                user.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
-                await _userManager.UpdateAsync(user);
+                //var authenticationResponse = _jwtService.CreateJwtToken(user);
 
-                return Ok(authenticationResponse);
+                //user.RefreshToken = authenticationResponse.RefreshToken;
+                //user.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
+                //await _userManager.UpdateAsync(user);
+
+                return Ok();
             }
             else
             {
@@ -83,7 +91,8 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        
+
         [HttpPost("login")]
         public async Task<ActionResult<ApplicationUser>>PostLogin(LoginDTO loginDTO)
         {
@@ -105,6 +114,13 @@ namespace Cinema.WebApi.Controllers
                 return Problem("Invalid Email/Username");
             }
 
+            if (!await _userManager.IsInRoleAsync(user, UserRoleOptions.Admin.ToString()) && !user.EmailConfirmed)
+            {
+                await SendConfirmationEmail(user);
+
+                return BadRequest();
+            }
+
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, lockoutOnFailure: false);
 
             if (result.Succeeded)
@@ -123,29 +139,9 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet("logout")]
-        public async Task<ActionResult<ApplicationUser>> GetLogout()
-        {
-            await _signInManager.SignOutAsync();
-            return NoContent();
-        }
 
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> IsEmailAlreadyRegistered(string email)
-        {
-            if (await _userManager.FindByEmailAsync(email) is null)
-            {
-                return Ok(true);
-            }
-            else
-            {
-                return Ok(false);
-            }
-        }
+        
 
-        [AllowAnonymous]
         [HttpPost("generate-new-jwt-token")]
         public async Task<IActionResult> GenerateNewAccessToken(TokenModel tokenModel)
         {
@@ -181,40 +177,95 @@ namespace Cinema.WebApi.Controllers
             return Ok(authenticationResponse);
         }
 
-        [Authorize(Roles = "Admin")]
-        private async Task CreateUserRole(RegisterDTO registerDTO, ApplicationUser user)
+        [HttpPost("forgot-password")]
+        [Authorize("NotAuthenticated")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO model)
         {
+            
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                
+                await SendForgotPasswordEmail(user);
 
-            switch (registerDTO.Role)
+                return Ok();
+            
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
             {
-                case UserRoleOptions.Admin:
+                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
                 {
-                    if (await _roleManager.FindByNameAsync(UserRoleOptions.Admin.ToString()) is null)
-                    {
-                        var applicationRole = new ApplicationRole()
-                        {
-                            Name = UserRoleOptions.Admin.ToString(),
-                        };
-                        await _roleManager.CreateAsync(applicationRole);
-                    }
-
-                    await _userManager.AddToRoleAsync(user, UserRoleOptions.Admin.ToString());
-                    break;
+                    return Ok();
                 }
-                case UserRoleOptions.User:
+
+                foreach (var error in result.Errors)
                 {
-                    if (await _roleManager.FindByNameAsync(UserRoleOptions.User.ToString()) is null)
-                    {
-                        var applicationRole = new ApplicationRole()
-                        {
-                            Name = UserRoleOptions.User.ToString(),
-                        };
-                        await _roleManager.CreateAsync(applicationRole);
-                    }
-
-                    await _userManager.AddToRoleAsync(user, UserRoleOptions.User.ToString());
-                    break;
+                    ModelState.AddModelError("", error.Description);
                 }
+                return BadRequest();
+            }
+
+            return NotFound();
+        }
+
+        [Authorize("NotAuthenticated")]
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var result = await _userManager.ConfirmEmailAsync(user, token);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, false);
+                    return Ok();
+                }
+            }
+
+            return BadRequest();
+        }
+
+
+        private async Task CreateUserRole(ApplicationUser user)
+        {
+            if (await _roleManager.FindByNameAsync(UserRoleOptions.User.ToString()) is null)
+            {
+                var applicationRole = new ApplicationRole()
+                {
+                    Name = UserRoleOptions.User.ToString(),
+                };
+                await _roleManager.CreateAsync(applicationRole);
+            }
+
+            await _userManager.AddToRoleAsync(user, UserRoleOptions.User.ToString());
+        }
+
+        private async Task SendForgotPasswordEmail(ApplicationUser? user)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            if (!string.IsNullOrEmpty(token))
+            {
+                var confirmationLink = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
+                var message = new Message(new string[] { user.Email! }, "Скидання паролю", confirmationLink!);
+                _emailForgotPasswordService.SendEmail(message);
+            }
+        }
+
+        private async Task SendConfirmationEmail(ApplicationUser? user)
+        {
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            if (!string.IsNullOrEmpty(token))
+            {
+                var confirmationLink = Url.Action("ConfirmEmail", "Account", new { token, email = user.Email }, Request.Scheme);
+                var message = new Message(new string[] { user.Email! }, "Account Confirmation", confirmationLink!);
+                _emailConfirmationService.SendEmail(message);
+
+
             }
         }
     }

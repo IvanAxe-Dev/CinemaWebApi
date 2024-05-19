@@ -1,4 +1,5 @@
 ﻿using Cinema.Core.Domain.IdentityEntities;
+using Cinema.Core.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -95,7 +96,7 @@ public partial class SqlcinemadbContext : IdentityDbContext<ApplicationUser, App
                 .OnDelete(DeleteBehavior.NoAction);
         });
 
-
+        
         OnModelCreatingPartial(modelBuilder);
     }
 
