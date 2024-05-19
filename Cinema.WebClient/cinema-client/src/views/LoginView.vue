@@ -1,7 +1,7 @@
 <script>
 import axios from 'axios';
 import { validateLoginData } from '@/utils';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 
 export default {
     data() {
@@ -12,6 +12,9 @@ export default {
             passwordPlaceholder: 'Password',
             requestError: ''
         };
+    },
+    computed: {
+        ...mapGetters(['isLoggedIn'])
     },
     methods: {
         ...mapMutations(['setLoggedIn']),
