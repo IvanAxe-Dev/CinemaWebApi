@@ -1,11 +1,13 @@
 <script>
 import UploadView from './Movies/UploadView.vue';
 import GetMovie from './Movies/GetView.vue';
+import ChartView from './Charts/ChartView.vue';
 
 export default {
   components: {
     UploadView,
-    GetMovie
+    GetMovie,
+    ChartView
   },
   data() {
     return {
@@ -18,6 +20,9 @@ export default {
     },
     goToUpdate() {
       this.currentView = 'GetView'
+    },
+    goToYearChart() {
+      this.currentView = 'ChartView'
     }
   }
 }
@@ -32,6 +37,7 @@ export default {
     <div class="panel-content">
       <GetMovie v-if="currentView === 'GetView'"></GetMovie>
       <UploadView v-if="currentView === 'UploadView'"></UploadView>
+      <ChartView></ChartView>
     </div>
   </div>
 </template>
