@@ -11,6 +11,7 @@ export const authorize = async ({ commit }, { tokenValue, emailValue }) => {
 
     try {
         const response = await axios.get(url);
+        commit('setIsAdmin', true)
         console.log(response)
     } catch (error) {
         console.log(error);

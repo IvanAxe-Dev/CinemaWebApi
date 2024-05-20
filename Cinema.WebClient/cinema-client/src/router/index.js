@@ -84,9 +84,9 @@ router.beforeEach((to, from, next) => {
 
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const isLoggedIn = store.getters.isLoggedIn
+  const isAdmin = store.getters.isAdmin
 
-  if (requiresAuth && !isLoggedIn) {
+  if (requiresAuth && !isAdmin) {
     next('/login')
   } else {
     next()

@@ -3,12 +3,14 @@ import * as actions from './actions'
 
 export default createStore({
   state: {
-    isLoggedIn: localStorage.getItem('isLoggedIn') === 'true',
+    isLoggedIn: localStorage.getItem('isLoggedIn') === 'false',
+    isAdmin: localStorage.getItem('isAdmin') === 'false',
     authorizationToken: localStorage.getItem('authorizationToken') === '',
     userEmail: localStorage.getItem('userEmail') === ''
   },
   getters: {
     isLoggedIn: state => state.isLoggedIn,
+    isAdmin: state => state.isAdmin,
     authorizationToken: state => state.authorizationToken,
     userEmail: state => state.userEmail,
   },
@@ -24,6 +26,10 @@ export default createStore({
     setUserEmail(state, userEmail) {
       state.userEmail = userEmail;
       localStorage.setItem('userEmail', userEmail);
+    },
+    setIsAdmin(state, isAdmin) {
+      state.isAdmin = isAdmin;
+      localStorage.setItem('isAdmin', isAdmin);
     }
   },
   actions
