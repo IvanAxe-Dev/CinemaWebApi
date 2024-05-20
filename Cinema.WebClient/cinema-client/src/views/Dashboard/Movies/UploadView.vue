@@ -23,10 +23,6 @@ const movie = reactive({
       <!-- Put -->
       <h2>Upload Movie</h2>
       <div class="form-group">
-          <label for="id">ID:</label>
-          <input v-model="movie.id" type="text" id="id" name="id" class="form-control" />
-      </div>
-      <div class="form-group">
           <label for="title">Title:</label>
           <input v-model="movie.title" type="text" id="title" name="title" class="form-control" />
       </div>

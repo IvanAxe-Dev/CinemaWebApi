@@ -27,7 +27,7 @@ export default createStore({
       state.userEmail = userEmail;
       localStorage.setItem('userEmail', userEmail);
     },
-    setIsAdmin(state, isAdmin) {
+    setAdmin(state, isAdmin) {
       state.isAdmin = isAdmin;
       localStorage.setItem('isAdmin', isAdmin);
     }

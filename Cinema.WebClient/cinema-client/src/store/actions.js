@@ -11,17 +11,20 @@ export const authorize = async ({ commit }, { tokenValue, emailValue }) => {
 
     try {
         const response = await axios.get(url);
-        commit('setIsAdmin', true)
+        commit('setAdmin', true)
         console.log(response)
     } catch (error) {
         console.log(error);
     }
 
+    // For testing purposes
+    commit('setAdmin', true)
     commit('setLoggedIn', true);
 }
 
 export const logout = ({ commit }) => {
     commit('setLoggedIn', false)
+    commit('setAdmin', false)
     commit('setAuthorizationToken', '')
     commit('setUserEmail', '')
 }
