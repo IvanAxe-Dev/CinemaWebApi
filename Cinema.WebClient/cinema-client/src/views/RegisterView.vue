@@ -7,6 +7,9 @@ export default {
             email: '',
             password: '',
             repeatPassword: '',
+            usernamePlaceholder: 'Username',
+            emailPlaceholder: 'Email',
+            passwordPlaceholder: 'Password',
             loading: false,
             errors: {}
         };
@@ -16,20 +19,28 @@ export default {
             this.errors = {};
             if (!this.username) {
                 this.errors.username = 'Username is required.';
+                this.usernamePlaceholder = this.errors.username;
             }
             if (!this.email) {
                 this.errors.email = 'Email is required.';
+                this.emailPlaceholder = this.errors.email;
             } else if (!/\S+@\S+\.\S+/.test(this.email)) {
                 this.errors.email = 'Email is invalid.';
+                this.emailPlaceholder = this.errors.email;
             }
             if (!this.password) {
                 this.errors.password = 'Password is required.';
+                this.passwordPlaceholder = this.errors.password;
             }
             if (!this.repeatPassword) {
                 this.errors.repeatPassword = 'Repeat Password is required.';
-            } else if (this.password !== this.repeatPassword) {
+                this.passwordPlaceholder = this.errors.password;
+            } 
+            if (this.password !== this.repeatPassword) {
                 this.errors.repeatPassword = 'Passwords do not match.';
+                this.passwordPlaceholder = '';
             }
+            console.log(Object.keys(this.errors).length)
             return Object.keys(this.errors).length === 0;
         },
         register() {
@@ -44,20 +55,24 @@ export default {
                 repeatPassword: this.repeatPassword
             };
 
-            console.log(userData);
-
             axios({
                 method: 'post',
                 url: 'api/Account/register',
                 data: userData
             }).then(response => {
                 console.log(response);
+                this.$router.push('/');
 
             }).catch(error => {
                 console.error(error);
+                this.formatServerErrorResponse(error.response.data.detail);
 
             });
-        }
+        },
+        formatServerErrorResponse(errorDetails) {
+            this.username, this.email, this.password, this.repeatPassword = '';
+            this.usernamePlaceholder, this.emailPlaceholder, this.passwordPlaceholder = errorDetails
+        },
     }
 };
 </script>
@@ -72,22 +87,18 @@ export default {
             <h3>Register Here</h3>
 
             <label for="username">Username</label>
-            <input type="text" placeholder="Username" id="username" v-model="username">
-            <span v-if="errors.username" class="error">{{ errors.username }}</span>
+            <input type="text" :placeholder="usernamePlaceholder" id="username" v-model="username">
 
             <label for="email">Email</label>
-            <input type="email" placeholder="Email" id="email" v-model="email">
-            <span v-if="errors.email" class="error">{{ errors.email }}</span>
+            <input type="email" :placeholder="emailPlaceholder" id="email" v-model="email">
 
             <label for="password">Password</label>
-            <input type="password" placeholder="Password" id="password" v-model="password">
-            <span v-if="errors.password" class="error">{{ errors.password }}</span>
+            <input type="password" :placeholder="passwordPlaceholder" id="password" v-model="password">
 
             <label for="repeatPassword">Repeat Password</label>
-            <input type="password" placeholder="Repeat Password" id="repeatPassword" v-model="repeatPassword">
-            <span v-if="errors.repeatPassword" class="error">{{ errors.repeatPassword }}</span>
+            <input type="password" :placeholder="passwordPlaceholder" id="repeatPassword" v-model="repeatPassword">
 
-            <button type="submit">Log In</button>
+            <button type="submit">Sign Up</button>
 
         </form>
     </div>
