@@ -50,7 +50,10 @@
                         password: this.password
                     }
                 }).then(response => {
-                    this.authorize(response.data.token, response.data.email);
+                    this.authorize({ 
+                        tokenValue: response.data.token, 
+                        emailValue: response.data.email 
+                    });
                     this.$router.push('/');
                 }).catch(error => {
                     if (error.response.data) {

@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import * as actions from './actions'
 
 export default createStore({
   state: {
@@ -25,15 +26,5 @@ export default createStore({
       localStorage.setItem('userEmail', userEmail);
     }
   },
-  actions: {
-    authorize({ commit }, tokenValue, emailValue) {
-      commit('setLoggedIn', true)
-      commit('setAuthorizationToken', tokenValue)
-      commit('setUserEmail', emailValue)
-    },
-    logout({ commit }) {
-      commit('setLoggedIn', false)
-      commit('setAuthorizationToken', '')
-    }
-  }
+  actions
 })
