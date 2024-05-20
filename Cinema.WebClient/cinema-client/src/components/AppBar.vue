@@ -8,7 +8,8 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['isLoggedIn'])
+    ...mapGetters(['isLoggedIn']),
+    ...mapGetters(['isAdmin'])
   },
   watch: {
     // Show navbar dynamically based on current route
@@ -39,7 +40,7 @@ export default {
   <div class="app-bar" v-if="showNavbar">
     <nav>
       <ul>
-        <li v-if="this.isLoggedIn"><router-link to="/admin">Admin</router-link></li>
+        <li v-if="this.isAdmin"><router-link to="/admin">Admin</router-link></li>
         <li><router-link to="/">Movies</router-link></li>
         <li><router-link to="/about">About</router-link></li>
       </ul>
