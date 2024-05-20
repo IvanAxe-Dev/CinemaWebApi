@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import store from '@/store'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -6,10 +7,8 @@ import RegisterView from '@/views/RegisterView.vue'
 import AccountView from '@/views/AccountView.vue'
 import MovieDetailsView from '@/views/MovieDetailsView.vue'
 import AdminPanel from '../views/Dashboard/AdminPanel.vue'
-
-import store from '@/store'
-import UpdateView from '@/views/Dashboard/Movies/UpdateView.vue'
 import UploadView from '@/views/Dashboard/Movies/UploadView.vue'
+import GetView from '@/views/Dashboard/Movies/GetView.vue'
 
 const routes = [
   {
@@ -55,13 +54,13 @@ const routes = [
     children: [
       {
         path: 'upload',
-        name: 'upload-movies',
+        name: 'upload-movie',
         component: UploadView
       },
       {
-        path: 'update',
-        name: 'update-movies',
-        component: UpdateView
+        path: 'get',
+        name: 'get-movie',
+        component: GetView
       }
     ]
 },

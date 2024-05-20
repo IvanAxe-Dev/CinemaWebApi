@@ -1,11 +1,11 @@
 <script>
-import UpdateView from './Movies/UpdateView.vue';
 import UploadView from './Movies/UploadView.vue';
+import GetMovie from './Movies/GetView.vue';
 
 export default {
   components: {
-    UpdateView,
-    UploadView
+    UploadView,
+    GetMovie
   },
   data() {
     return {
@@ -17,7 +17,7 @@ export default {
       this.currentView = 'UploadView'
     },
     goToUpdate() {
-      this.currentView = 'UpdateView'
+      this.currentView = 'GetView'
     }
   }
 }
@@ -27,11 +27,11 @@ export default {
   <div class="admin-panel">
     <div class="panel-navigation">
       <button class="nav-button" @click="goToUpload">Upload movie</button>
-      <button class="nav-button" @click="goToUpdate">Update movie</button>
+      <button class="nav-button" @click="goToUpdate">Get movies</button>
     </div>
     <div class="panel-conent">
       <UploadView v-if="currentView === 'UploadView'"></UploadView>
-      <UpdateView v-if="currentView === 'UpdateView'"></UpdateView>
+      <GetMovie v-if="currentView === 'GetView'"></GetMovie>
     </div>
   </div>
 </template>

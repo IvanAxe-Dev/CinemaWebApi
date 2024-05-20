@@ -1,38 +1,77 @@
 <script setup>
+import { reactive } from 'vue';
 
+const movie = reactive({
+  id: '',
+  title: '',
+  rentalStartDate: '',
+  rentalEndDate: '',
+  description: '',
+  imageUrl: '',
+  releaseDate: '',
+  director: '',
+  duration: '',
+  ageRestriction: '',
+  trailerUrl: '',
+  actors: ''
+});
 </script>
 
 <template>
-  <div class="upload">
-    <h1>This is upload page</h1>
-    <form @submit.prevent="submitMovie" class="movie-form">
-      <h2>Search and Categories</h2>
+  <div class="update">
+    <form class="movie-form">
+      <!-- Put -->
+      <h2>Upload Movie</h2>
       <div class="form-group">
-          <label for="searchTerm">Search Term:</label>
-          <input v-model="movie.searchTerm" type="text" id="searchTerm" name="searchTerm" class="form-control" />
+          <label for="id">ID:</label>
+          <input v-model="movie.id" type="text" id="id" name="id" class="form-control" />
       </div>
       <div class="form-group">
-          <label for="categories">Categories:</label>
-          <input v-model="movie.categories" type="text" id="categories" name="categories" class="form-control" />
+          <label for="title">Title:</label>
+          <input v-model="movie.title" type="text" id="title" name="title" class="form-control" />
       </div>
       <div class="form-group">
-          <label for="dateStartInterval">Date Start Interval:</label>
-          <input v-model="movie.dateStartInterval" type="datetime-local" id="dateStartInterval" name="dateStartInterval" class="form-control" />
+          <label for="rentalStartDate">Rental Start Date:</label>
+          <input v-model="movie.rentalStartDate" type="datetime-local" id="rentalStartDate" name="rentalStartDate" class="form-control" />
       </div>
       <div class="form-group">
-          <label for="dateEndInterval">Date End Interval:</label>
-          <input v-model="movie.dateEndInterval" type="datetime-local" id="dateEndInterval" name="dateEndInterval" class="form-control" />
+          <label for="rentalEndDate">Rental End Date:</label>
+          <input v-model="movie.rentalEndDate" type="datetime-local" id="rentalEndDate" name="rentalEndDate" class="form-control" />
       </div>
       <div class="form-group">
-          <label for="timeStartInterval">Time Start Interval:</label>
-          <input v-model="movie.timeStartInterval" type="time" id="timeStartInterval" name="timeStartInterval" class="form-control" />
+          <label for="description">Description:</label>
+          <input v-model="movie.description" type="text" id="description" name="description" class="form-control" />
       </div>
       <div class="form-group">
-          <label for="timeEndInterval">Time End Interval:</label>
-          <input v-model="movie.timeEndInterval" type="time" id="timeEndInterval" name="timeEndInterval" class="form-control" />
+          <label for="imageUrl">Image URL:</label>
+          <input v-model="movie.imageUrl" type="text" id="imageUrl" name="imageUrl" class="form-control" />
       </div>
-      
-      <button type="submit" class="btn btn-primary">Get Movie Data</button>
+      <div class="form-group">
+          <label for="releaseDate">Release Date:</label>
+          <input v-model="movie.releaseDate" type="datetime-local" id="releaseDate" name="releaseDate" class="form-control" />
+      </div>
+      <div class="form-group">
+          <label for="director">Director:</label>
+          <input v-model="movie.director" type="text" id="director" name="director" class="form-control" />
+      </div>
+      <div class="form-group">
+          <label for="duration">Duration:</label>
+          <input v-model="movie.duration" type="text" id="duration" name="duration" class="form-control" />
+      </div>
+      <div class="form-group">
+          <label for="ageRestriction">Age Restriction:</label>
+          <input v-model="movie.ageRestriction" type="number" id="ageRestriction" name="ageRestriction" class="form-control" />
+      </div>
+      <div class="form-group">
+          <label for="trailerUrl">Trailer URL:</label>
+          <input v-model="movie.trailerUrl" type="text" id="trailerUrl" name="trailerUrl" class="form-control" />
+      </div>
+      <div class="form-group">
+          <label for="actors">Actors:</label>
+          <input v-model="movie.actors" type="text" id="actors" name="actors" class="form-control" />
+      </div>
+      <!-- Get -->
+      <button type="submit" class="btn btn-primary">{{ movie.id ? 'Update' : 'Add' }} Movie</button>
     </form>
   </div>
 </template>
