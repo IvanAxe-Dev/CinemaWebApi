@@ -1,13 +1,13 @@
 <script>
 import UploadView from './Movies/UploadView.vue';
 import GetMovie from './Movies/GetView.vue';
-import ChartView from './Charts/ChartView.vue';
+import ReleasesView from './Charts/ReleasesView.vue';
 
 export default {
   components: {
     UploadView,
     GetMovie,
-    ChartView
+    ReleasesView
   },
   data() {
     return {
@@ -33,12 +33,12 @@ export default {
     <div class="panel-navigation">
       <button class="nav-button" @click="goToUpdate">Get movies</button>
       <button class="nav-button" @click="goToUpload">Upload movie</button>
-      <button class="nav-button" @click="goToYearChart">Release Statistic</button>
+      <button class="nav-button" @click="goToYearChart">Releases Statistic</button>
     </div>
     <div class="panel-content">
       <GetMovie v-if="currentView === 'GetView'"></GetMovie>
       <UploadView v-if="currentView === 'UploadView'"></UploadView>
-      <ChartView v-if="currentView === 'ChartView'"></ChartView>
+      <ReleasesView v-if="currentView === 'ChartView'"></ReleasesView>
     </div>
   </div>
 </template>

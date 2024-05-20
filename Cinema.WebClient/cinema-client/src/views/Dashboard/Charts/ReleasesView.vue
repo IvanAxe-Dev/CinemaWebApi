@@ -14,7 +14,6 @@ const fetchData = async () => {
   try {
     const response = await axios.get(url);
     responseData.value = response.data; 
-    console.log(responseData.value)
   } catch (error) {
     console.error(error);
   }
@@ -31,7 +30,7 @@ const chartData = computed(() => {
     labels: responseData.value.map(item => item.year),
     datasets: [
       {
-        label: "Count",
+        label: "Number of movies",
         backgroundColor: "#42b983",
         data: responseData.value.map(item => item.count)
       }
@@ -47,8 +46,8 @@ const chartOptions = {
 </script>
 
 <template>
-  <div class="year-chart">
-    <h1>Chart</h1>
+  <div class="releases-chart">
+    <h1>Number of movies released by year</h1>
     <div v-if="responseData" class="chart-container">
       <Bar v-if="chartData" :data="chartData" :options="chartOptions"></Bar>
     </div>
