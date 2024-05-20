@@ -1,13 +1,14 @@
-    import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import store from '@/store'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import AccountView from '@/views/AccountView.vue'
 import MovieDetailsView from '@/views/MovieDetailsView.vue'
-import AdminAddMovieView from '@/views/AdminAddMovieView.vue';
-
-import store from '@/store'
+import AdminPanel from '../views/Dashboard/AdminPanel.vue'
+import UploadView from '@/views/Dashboard/Movies/UploadView.vue'
+import GetView from '@/views/Dashboard/Movies/GetView.vue'
 
 const routes = [
   {
@@ -44,13 +45,25 @@ const routes = [
     component: RegisterView
     },
   {
-        path: '/admin',
-        name: 'admin',
-        meta: {
-            requiresAuth: true
-        },
-      component: AdminAddMovieView
+    path: '/admin',
+    name: 'admin',
+    meta: {
+        requiresAuth: true
     },
+    component: AdminPanel,
+    children: [
+      {
+        path: 'upload',
+        name: 'upload-movie',
+        component: UploadView
+      },
+      {
+        path: 'get',
+        name: 'get-movie',
+        component: GetView
+      }
+    ]
+},
 ]
 
 const router = createRouter({
@@ -63,6 +76,17 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = store.getters.isLoggedIn
 
   if (requiresAuth && !isLoggedIn) {
+    next('/login')
+  } else {
+    next()
+  }
+})
+
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const isAdmin = store.getters.isAdmin
+
+  if (requiresAuth && !isAdmin) {
     next('/login')
   } else {
     next()

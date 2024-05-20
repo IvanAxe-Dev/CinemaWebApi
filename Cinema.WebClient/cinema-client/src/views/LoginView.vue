@@ -1,7 +1,7 @@
 <script>
     import axios from 'axios';
     import { validateLoginData } from '@/utils';
-    import { mapMutations, mapGetters } from 'vuex';
+    import { mapMutations, mapGetters, mapActions } from 'vuex';
 
     export default {
         data() {
@@ -18,6 +18,7 @@
         },
         methods: {
             ...mapMutations(['setLoggedIn']),
+            ...mapActions(['authorize']),
             login() {
                 const userData = {
                     emailOrUsername: this.emailOrUsername,
@@ -49,8 +50,10 @@
                         password: this.password
                     }
                 }).then(response => {
-                    console.log(response);
-                    this.setLoggedIn(true);
+                    this.authorize({ 
+                        tokenValue: response.data.token, 
+                        emailValue: response.data.email 
+                    });
                     this.$router.push('/');
                 }).catch(error => {
                     if (error.response.data) {
