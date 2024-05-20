@@ -27,9 +27,6 @@ const routes = [
     meta: {
       requiresAuth: true
     },
-    meta: {
-      requiresAuth: true
-    },
     component: AccountView
   },
   {
