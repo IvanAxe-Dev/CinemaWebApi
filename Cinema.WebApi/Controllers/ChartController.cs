@@ -1,4 +1,4 @@
-using Cinema.Core.Domain.Entities;
+
 using Cinema.Core.DTO;
 using Cinema.Core.ServiceContracts;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +10,15 @@ namespace Cinema.WebApi.Controllers;
 public class ChartsController : BaseController
 {
     private readonly IMovieService _movieService;
-    private readonly ITicketService _ticketService;
+
+    private readonly ISessionService _sessionService;
 
     private record CountByYearResponseItem(string Year, int Count);
     
-    private record SeatsByYearResponseItem(string Tickets, int Seats);
-    public ChartsController(IMovieService movieService, ITicketService ticketService)
+    public ChartsController(IMovieService movieService, ISessionService sessionService)
     {
         _movieService = movieService;
-        _ticketService = ticketService;
+        _sessionService = sessionService;
     }
 
     [HttpGet("countByYear")]
@@ -35,12 +35,15 @@ public class ChartsController : BaseController
     [HttpGet("seatsByYear")]
     public async Task<JsonResult> GetTotalPriceByCategory()
     {
-        List<Ticket> tickets = await _ticketService.GetAllAsync();
-        var result = tickets.Select(element => new
+
+        var sessions = await _sessionService.GetAllAsync();
+        var result = sessions.Select(el => new
         {
-            TicketsSold = element.Session.Tickets.Count - element.Session.AvailableTickets,
-            element.Session.Date.Year,
-        }).GroupBy(element => element.Year).ToList();
+            TicketsSold = el.Tickets.Count - el.AvailableTickets,
+            el.Date.Year,
+            el.Movie.Title,
+            el.Price
+        }).GroupBy(el => el.TicketsSold).ToList();
         return new JsonResult(result);
     }
 }
