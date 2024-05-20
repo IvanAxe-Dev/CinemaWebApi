@@ -71,7 +71,20 @@ const movie = reactive({
           <input v-model="movie.actors" type="text" id="actors" name="actors" class="form-control" />
       </div>
       <!-- Get -->
-      <button type="submit" class="btn btn-primary">{{ movie.id ? 'Update' : 'Add' }} Movie</button>
+      <button type="submit" class="button button-primary">{{ movie.id ? 'Update' : 'Add' }} Movie</button>
     </form>
   </div>
 </template>
+
+<style scoped lang="scss">
+@import './styles/forms.scss';
+
+.update {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+</style>

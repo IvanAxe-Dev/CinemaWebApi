@@ -64,6 +64,8 @@ export default {
   align-items: center;
   padding: 10px 20px;
   margin: 15px;
+  border-radius: 15px;
+  background-color: #dde2ec;
 
   nav {
     color: #20232a;
@@ -87,11 +89,7 @@ export default {
     text-decoration: none;
   }
 
-  a:hover {
-    color: #8b8bc2;
-  }
-
-  .router-link-exact-active {
+  a:hover, .router-link-exact-active {
     color: #8b8bc2;
   }
 

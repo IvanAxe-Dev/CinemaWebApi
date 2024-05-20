@@ -13,10 +13,10 @@ const movie = reactive({
 </script>
 
 <template>
-  <div class="upload">
+  <div class="get">
     <!--Get-->
     <form class="movie-form">
-      <h2>Search and Categories</h2>
+      <h2>Get movies with required fields</h2>
       <div class="form-group">
           <label for="searchTerm">Search Term:</label>
           <input v-model="movie.searchTerm" type="text" id="searchTerm" name="searchTerm" class="form-control" />
@@ -42,7 +42,20 @@ const movie = reactive({
           <input v-model="movie.timeEndInterval" type="time" id="timeEndInterval" name="timeEndInterval" class="form-control" />
       </div>
       
-      <button type="submit" class="btn btn-primary">Get Movie Data</button>
+      <button type="submit" class="button button-primary">Get Movie Data</button>
     </form>
   </div>
 </template>
+
+<style scoped lang="scss">
+@import './styles/forms.scss';
+
+.get {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+</style>
