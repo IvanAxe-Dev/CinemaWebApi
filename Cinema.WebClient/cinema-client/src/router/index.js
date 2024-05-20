@@ -27,6 +27,9 @@ const routes = [
     meta: {
       requiresAuth: true
     },
+    meta: {
+      requiresAuth: true
+    },
     component: AccountView
   },
   {
@@ -69,6 +72,17 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const isLoggedIn = store.getters.isLoggedIn
+
+  if (requiresAuth && !isLoggedIn) {
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 router.beforeEach((to, from, next) => {
