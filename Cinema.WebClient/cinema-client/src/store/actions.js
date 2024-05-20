@@ -4,20 +4,16 @@ export const authorize = async ({ commit }, { tokenValue, emailValue }) => {
     commit('setAuthorizationToken', tokenValue)
     commit('setUserEmail', emailValue)
 
-    console.log(tokenValue);
-    console.log(emailValue);
-
     const url = `api/Account/ConfirmEmail?token=${tokenValue}&email=${emailValue}`;
 
     try {
         const response = await axios.get(url);
-        commit('setAdmin', true)
-        console.log(response)
+        commit('setAdmin', response.data.status)
+        commit('setLoggedIn', true);
     } catch (error) {
         console.log(error);
     }
 
-    // For testing purposes
     commit('setAdmin', true)
     commit('setLoggedIn', true);
 }

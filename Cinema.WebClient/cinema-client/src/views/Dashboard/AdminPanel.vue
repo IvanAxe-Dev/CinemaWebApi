@@ -33,11 +33,12 @@ export default {
     <div class="panel-navigation">
       <button class="nav-button" @click="goToUpdate">Get movies</button>
       <button class="nav-button" @click="goToUpload">Upload movie</button>
+      <button class="nav-button" @click="goToYearChart">Release Statistic</button>
     </div>
     <div class="panel-content">
       <GetMovie v-if="currentView === 'GetView'"></GetMovie>
       <UploadView v-if="currentView === 'UploadView'"></UploadView>
-      <ChartView></ChartView>
+      <ChartView v-if="currentView === 'ChartView'"></ChartView>
     </div>
   </div>
 </template>
