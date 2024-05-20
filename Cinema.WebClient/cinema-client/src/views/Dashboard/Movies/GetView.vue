@@ -1,5 +1,6 @@
 <script setup>
 import { reactive } from 'vue';
+import axios from 'axios';
 
 const movie = reactive({
   searchTerm: '',
@@ -10,12 +11,31 @@ const movie = reactive({
   timeEndInterval: '',
 });
 
+function getMovies() {
+  axios({
+    method: 'get',
+    url: 'api/Movie',
+    data: {
+      searchTerm: movie.searchTerm,
+      categories: movie.categories,
+      dateStartInterval: movie.dateStartInterval,
+      dateEndInterval: movie.dateEndInterval,
+      timeStartInterval: movie.timeStartInterval,
+      timeEndInterval: movie.timeEndInterval,
+    }
+  }).then(response => {
+    console.log(response);
+  }).catch(error => {
+    console.log(error);
+  });
+}
+
 </script>
 
 <template>
   <div class="get">
     <!--Get-->
-    <form class="movie-form">
+    <form class="movie-form" @submit.prevent="getMovies">
       <h2>Get movies with required fields</h2>
       <div class="form-group">
           <label for="searchTerm">Search Term:</label>
@@ -48,14 +68,5 @@ const movie = reactive({
 </template>
 
 <style scoped lang="scss">
-@import './styles/forms.scss';
-
-.get {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+@import '../styles/forms.scss';
 </style>
