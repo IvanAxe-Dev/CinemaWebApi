@@ -1,30 +1,29 @@
 <script>
+import { mapGetters, mapMutations } from 'vuex';
+
 export default {
   data() {
     return {
       showNavbar: true
     };
   },
+  computed: {
+    ...mapGetters(['isLoggedIn'])
+  },
   watch: {
-    // Show navbar dynamicaly based on current route
+    // Show navbar dynamically based on current route
     $route(to) {
       this.showNavbar = !["/login", "/register"].includes(to.path);
     }
   },
-
   methods: {
+    ...mapMutations(['setLoggedIn']),
     login() {
       this.$router.push("/login");
-      // Simulating logged in/out session logic
-      // Remove after implementation
-      this.isLoggedIn = true;
     },
     logout() {
-      this.$router.push("/");
-      // Simulating logged in/out session logic
-      // Remove after implementation
-      this.isLoggedIn = false;
-      this.$forceUpdate();
+      this.$router.push("/logout");
+      this.setLoggedIn(false);
     },
     register() {
       this.$router.push("/register");
@@ -40,12 +39,13 @@ export default {
   <div class="app-bar" v-if="showNavbar">
     <nav>
       <ul>
+        <li v-if="this.isLoggedIn"><router-link to="/admin">Admin</router-link></li>
         <li><router-link to="/">Movies</router-link></li>
         <li><router-link to="/about">About</router-link></li>
       </ul>
     </nav>
     <div class="registration-buttons">
-      <template v-if="isLoggedIn">
+      <template v-if="this.isLoggedIn">
         <button class="logout-button" @click="logout">Logout</button>
         <button class="account-button" @click="openAccount">Account</button>
       </template>
