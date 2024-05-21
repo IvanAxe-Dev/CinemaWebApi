@@ -78,3 +78,7 @@ export function validateLoginData(userData) {
 
     return status;
 }
+
+export function combineArrays(nestedArrays) {
+    return [].concat(...nestedArrays);
+}
